@@ -1,2 +1,2 @@
-# Capitalism-In-A-Nutshell
+# Capitalism In A Nutshell
 An RPGish sort of game. Nothing much.
