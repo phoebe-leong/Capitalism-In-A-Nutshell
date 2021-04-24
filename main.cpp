@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include "classes.hpp"
-using namespace std;
 
 // variable declaration
 
@@ -30,20 +29,20 @@ void endgame();
 void startScreen() {
 
     system("clear");
-    cout << "\n\n  Capitalism In A Nutshell\n";
-    cout << "    Made by PH03be\n\n";
+    std::cout << "\n\n  Capitalism In A Nutshell\n";
+    std::cout << "    Made by PH03be\n\n";
 
-    cout << "  Press enter to start\n";
-    cin.get();
+    std::cout << "  Press enter to start\n";
+    std::cin.get();
     usernameSelect();
 
 }
 
 void endgame() {
-    cout << "Congratulations! You bought every item!\n";
-    cout << "This means that you won!\n";
-    cout << "GG\n";
-    cin.get();
+    std::cout << "Congratulations! You bought every item!\n";
+    std::cout << "This means that you won!\n";
+    std::cout << "GG\n";
+    std::cin.get();
     system("clear");
     mainMenu();
 }
@@ -104,41 +103,41 @@ void classVariables() {
 // universal close function (of course)
 
 int close() {
-    cout << "Press enter to close the program:\n";
-    cin.get();
+    std::cout << "Press enter to close the program:\n";
+    std::cin.get();
     system("clear");
     return 0;
 }
 
 void uniMenu() {
 
-    string input;
+    std::string input;
 
     // checks whether the user has enough money for the course/s
 
-    cout << "==========================================\n";
-    cout << "           University Courses\n";
-    cout << "==========================================\n\n";
+    std::cout << "==========================================\n";
+    std::cout << "           University Courses\n";
+    std::cout << "==========================================\n\n";
 
     if (usr.credits >= uni.UniFee) {
 
-    cout << "Uni Course Fee: $" << uni.UniFee << "\n\n";
+    std::cout << "Uni Course Fee: $" << uni.UniFee << "\n\n";
 
     // if the user meets specific requirements, show specific text
 
      if (jobs.hasUniversityDegree == true && shop.hasItem1 == true) {
-        cout << "Computer Science - Gives access to 'Programmer' job\n";
-        cout << "Teaching - Gives access to 'Teaching' job\n";
-        cout << "Cooking - Gives access to 'Chef' job\n";
+        std::cout << "Computer Science - Gives access to 'Programmer' job\n";
+        std::cout << "Teaching - Gives access to 'Teaching' job\n";
+        std::cout << "Cooking - Gives access to 'Chef' job\n";
 
-        cout << "\n";
-        cout << "Commands:\n";
-        cout << "'cs' to choose the Computer Science degree\n";
-        cout << "'teaching' to choose the Teaching degree\n";
-        cout << "'cooking' to choose the Cooking degree\n";
-        cout << "'exit' to exit the university menu\n";
+        std::cout << "\n";
+        std::cout << "Commands:\n";
+        std::cout << "'cs' to choose the Computer Science degree\n";
+        std::cout << "'teaching' to choose the Teaching degree\n";
+        std::cout << "'cooking' to choose the Cooking degree\n";
+        std::cout << "'exit' to exit the university menu\n";
 
-        cin >> input;
+        std::cin >> input;
 
         if (input == "cs") {
             usr.credits = usr.credits - uni.UniFee;
@@ -167,19 +166,19 @@ void uniMenu() {
         }
 
     } else if (jobs.teachingDegreeFinished  == true && jobs.hasUniversityDegree == true && shop.hasItem1 == true) {
-        cout << "Computer Science - Gives access to 'Programmer job'\n";
-        cout << "Teaching - Gives access to 'Teaching' job\n";
-        cout << "Talking - Gives access to 'Lecturer' job\n";
-        cout << "Cooking - Gives access to 'Chef' job\n\n";
+        std::cout << "Computer Science - Gives access to 'Programmer job'\n";
+        std::cout << "Teaching - Gives access to 'Teaching' job\n";
+        std::cout << "Talking - Gives access to 'Lecturer' job\n";
+        std::cout << "Cooking - Gives access to 'Chef' job\n\n";
 
-        cout << "Commands:\n";
-        cout << "'cs' to choose the Computer Science degree\n";
-        cout << "'teaching' to choose the Teaching degree\n";
-        cout << "'cooking' to choose the Cooking degree\n";
-        cout << "'talking' to choose the Talking degree\n";
-        cout << "'exit' to exit the university menu\n";
+        std::cout << "Commands:\n";
+        std::cout << "'cs' to choose the Computer Science degree\n";
+        std::cout << "'teaching' to choose the Teaching degree\n";
+        std::cout << "'cooking' to choose the Cooking degree\n";
+        std::cout << "'talking' to choose the Talking degree\n";
+        std::cout << "'exit' to exit the university menu\n";
         
-        cin >> input;
+        std::cin >> input;
 
         if (input == "teaching") {
             usr.credits = usr.credits - uni.UniFee;
@@ -214,18 +213,18 @@ void uniMenu() {
             mainMenu();
         }
     }  else if (jobs.hasUniversityDegree == true && jobs.teachingDegreeFinished == true) {
-        cout << "Computer Science - Requires 'Quantum Computer'\n";
-        cout << "Teaching - Gives access to 'Teaching' job\n";
-        cout << "Talking - Gives access to 'Lecturer' job\n";
-        cout << "Cooking - Gives access to 'Chef' job\n\n";
+        std::cout << "Computer Science - Requires 'Quantum Computer'\n";
+        std::cout << "Teaching - Gives access to 'Teaching' job\n";
+        std::cout << "Talking - Gives access to 'Lecturer' job\n";
+        std::cout << "Cooking - Gives access to 'Chef' job\n\n";
 
-        cout << "Commands:\n";
-        cout << "'teaching' to choose the Teaching degree\n";
-        cout << "'cooking' to choose the Cooking degree\n";
-        cout << "'talking' to choose the Talking degree\n";
-        cout << "'exit' to exit the university menu\n";
+        std::cout << "Commands:\n";
+        std::cout << "'teaching' to choose the Teaching degree\n";
+        std::cout << "'cooking' to choose the Cooking degree\n";
+        std::cout << "'talking' to choose the Talking degree\n";
+        std::cout << "'exit' to exit the university menu\n";
         
-        cin >> input;
+        std::cin >> input;
 
         if (input == "teaching") {
             usr.credits = usr.credits - uni.UniFee;
@@ -255,17 +254,17 @@ void uniMenu() {
             mainMenu();
         }
     } else if (jobs.hasUniversityDegree == true) {
-        cout << "Computer Science - Requires 'Quantum Computer'\n";
-        cout << "Teaching - Gives access to 'Teaching' job\n";
-        cout << "Talking - Requires 'Teaching' degree\n";
-        cout << "Cooking - Gives access to 'Chef' job\n\n";
+        std::cout << "Computer Science - Requires 'Quantum Computer'\n";
+        std::cout << "Teaching - Gives access to 'Teaching' job\n";
+        std::cout << "Talking - Requires 'Teaching' degree\n";
+        std::cout << "Cooking - Gives access to 'Chef' job\n\n";
 
-        cout << "Commands:\n";
-        cout << "'teaching' to choose the Teaching degree\n";
-        cout << "'cooking' to choose the Cooking degree\n";
-        cout << "'exit' to exit the university menu\n";
+        std::cout << "Commands:\n";
+        std::cout << "'teaching' to choose the Teaching degree\n";
+        std::cout << "'cooking' to choose the Cooking degree\n";
+        std::cout << "'exit' to exit the university menu\n";
         
-        cin >> input;
+        std::cin >> input;
 
         if (input == "teaching") {
             usr.credits = usr.credits - uni.UniFee;
@@ -289,17 +288,17 @@ void uniMenu() {
             mainMenu();
         }
     } else if (shop.hasItem1 == true) {
-        cout << "Computer Science - Requires a previous degree in another field\n";
-        cout << "Teaching - Gives access to 'Teaching' job\n";
-        cout << "Talking - Requires 'Teaching' degree\n";
-        cout << "Cooking - Gives access to 'Chef' job\n\n";
+        std::cout << "Computer Science - Requires a previous degree in another field\n";
+        std::cout << "Teaching - Gives access to 'Teaching' job\n";
+        std::cout << "Talking - Requires 'Teaching' degree\n";
+        std::cout << "Cooking - Gives access to 'Chef' job\n\n";
 
-        cout << "Commands:\n";
-        cout << "'teaching' to choose the Teaching degree\n";
-        cout << "'cooking' to choose the Cooking degree\n";
-        cout << "'exit' to exit the university menu\n";
+        std::cout << "Commands:\n";
+        std::cout << "'teaching' to choose the Teaching degree\n";
+        std::cout << "'cooking' to choose the Cooking degree\n";
+        std::cout << "'exit' to exit the university menu\n";
         
-        cin >> input;
+        std::cin >> input;
 
         if (input == "teaching") {
             usr.credits = usr.credits - uni.UniFee;
@@ -323,18 +322,18 @@ void uniMenu() {
             mainMenu();
         }
     } else if (shop.hasItem1 == true && jobs.teachingDegreeFinished == true) {
-        cout << "Computer Science - Requires a previous degree in another field\n";
-        cout << "Teaching - Gives access to 'Teaching' job\n";
-        cout << "Talking - Gives access to 'Lecturer' job\n";
-        cout << "Cooking - Gives access to 'Chef' job\n\n";
+        std::cout << "Computer Science - Requires a previous degree in another field\n";
+        std::cout << "Teaching - Gives access to 'Teaching' job\n";
+        std::cout << "Talking - Gives access to 'Lecturer' job\n";
+        std::cout << "Cooking - Gives access to 'Chef' job\n\n";
 
-        cout << "Commands:\n";
-        cout << "'teaching' to choose the Teaching degree\n";
-        cout << "'cooking' to choose the Cooking degree\n";
-        cout << "'talking' to choose the Talking degree\n";
-        cout << "'exit' to exit the university menu\n";
+        std::cout << "Commands:\n";
+        std::cout << "'teaching' to choose the Teaching degree\n";
+        std::cout << "'cooking' to choose the Cooking degree\n";
+        std::cout << "'talking' to choose the Talking degree\n";
+        std::cout << "'exit' to exit the university menu\n";
         
-        cin >> input;
+        std::cin >> input;
 
         if (input == "teaching") {
             usr.credits = usr.credits - uni.UniFee;
@@ -362,17 +361,17 @@ void uniMenu() {
             mainMenu();
         }
     } else {
-        cout << "Computer Science - Requires a previous degree in another field and 'Quantum Computer'\n";
-        cout << "Teaching - Gives access to 'Teaching' job\n";
-        cout << "Talking - Requires 'Teaching' degree\n";
-        cout << "Cooking - Gives access to 'Chef' job\n\n";
+        std::cout << "Computer Science - Requires a previous degree in another field and 'Quantum Computer'\n";
+        std::cout << "Teaching - Gives access to 'Teaching' job\n";
+        std::cout << "Talking - Requires 'Teaching' degree\n";
+        std::cout << "Cooking - Gives access to 'Chef' job\n\n";
 
-        cout << "Commands:\n";
-        cout << "'teaching' to choose the Teaching degree\n";
-        cout << "'cooking' to choose the Cooking degree\n";
-        cout << "'exit' to exit the university menu\n";
+        std::cout << "Commands:\n";
+        std::cout << "'teaching' to choose the Teaching degree\n";
+        std::cout << "'cooking' to choose the Cooking degree\n";
+        std::cout << "'exit' to exit the university menu\n";
         
-        cin >> input;
+        std::cin >> input;
 
         if (input == "teaching") {
             usr.credits = usr.credits - uni.UniFee;
@@ -398,7 +397,7 @@ void uniMenu() {
     }   
     } else {
 
-        cout << "          You need: $" << uni.UniFee << "\n\n"; 
+        std::cout << "          You need: $" << uni.UniFee << "\n\n"; 
 
         InsufficientFunds();
 
@@ -419,78 +418,78 @@ void mainMenu() {
             endgame();
     }
 
-    cout << "Credits: $" << usr.credits << "\n";
-    cout << "Name: " << usr.username << "\n";
-    cout << "Job: " << jobs.currentJobStatus << "\n\n";
+    std::cout << "Credits: $" << usr.credits << "\n";
+    std::cout << "Name: " << usr.username << "\n";
+    std::cout << "Job: " << jobs.currentJobStatus << "\n\n";
 
     // shows the players items (only shows the items list if they have any items)
 
     if (shop.hasAnItem == true) {
 
-        cout << "Items:\n";
+        std::cout << "Items:\n";
 
         if (shop.hasItem1 == true) {
             if (shop.item1Amount > 1) {
-                cout  << shop.item1Amount << " Quantum Computers\n";
+                std::cout  << shop.item1Amount << " Quantum Computers\n";
             } else {
-                cout  << shop.item1Amount << " Quantum Computer\n";
+                std::cout  << shop.item1Amount << " Quantum Computer\n";
             }
         }
         if (shop.hasItem2 == true) {
             if (shop.item2Amount > 1) {
-                cout << shop.item2Amount << " Big houses\n";
+                std::cout << shop.item2Amount << " Big houses\n";
             } else {
-                cout << shop.item2Amount << " Big house\n";
+                std::cout << shop.item2Amount << " Big house\n";
             }
         }
         if (shop.hasItem3 == true) {
             if (shop.item3Amount > 1) {
-                cout << shop.item3Amount << " Hoverboards\n";
+                std::cout << shop.item3Amount << " Hoverboards\n";
             } else {
-                cout << shop.item3Amount << " Hoverboard\n";
+                std::cout << shop.item3Amount << " Hoverboard\n";
             }
         }
         if (shop.hasItem4 == true) {
             if (shop.item4Amount > 1) {
-                cout << shop.item4Amount << " Cats 'meow'\n";
+                std::cout << shop.item4Amount << " Cats 'meow'\n";
             } else {
-                cout << shop.item4Amount << " Cat 'meow'\n";
+                std::cout << shop.item4Amount << " Cat 'meow'\n";
             }
         }
 
-        cout << "\n";
+        std::cout << "\n";
     }
 
-    cout << "Commands:\n";
-    cout << "'jobs' to go to the job list\n";
-    cout << "'shop' to go to the shop\n";
+    std::cout << "Commands:\n";
+    std::cout << "'jobs' to go to the job list\n";
+    std::cout << "'shop' to go to the shop\n";
 
     // work commands
 
     if (jobs.currentJobStatus != "Unemployed") {
         if (jobs.currentJobStatus == "Taxi Driver") {
-            cout << "'drive' to work\n";
+            std::cout << "'drive' to work\n";
         } else if (jobs.currentJobStatus == "Waiter") {
-            cout << "'serve' to work\n";
+            std::cout << "'serve' to work\n";
         } else if (jobs.currentJobStatus == "Teacher") {
-            cout << "'teach' to work\n";
+            std::cout << "'teach' to work\n";
         } else if (jobs.currentJobStatus == "Programmer") {
-            cout << "'code' to work\n";
+            std::cout << "'code' to work\n";
         } else if (jobs.currentJobStatus == "Chef") {
-            cout << "'cook' to work\n";
+            std::cout << "'cook' to work\n";
         } else if (jobs.currentJobStatus == "Lecturer") {
-            cout << "'talk' to work\n";
+            std::cout << "'talk' to work\n";
         }
     }
 
-    cout << "'exit' to exit the program\n";
-    cout << "'uni' to go to the university menu\n";
+    std::cout << "'exit' to exit the program\n";
+    std::cout << "'uni' to go to the university menu\n";
 
-    string input;
-    cin >> input;
-    cin.ignore();
+    std::string input;
+    std::cin >> input;
+    std::cin.ignore();
 
-    if (input == "exit") {
+    if (input == "exit" /* use _khit() */) {
         system("clear");
         close();
     } else if (input == "jobs" || input == "job") {
@@ -535,36 +534,36 @@ void mainMenu() {
 
 void usernameSelect() {
     system("clear");
-    cout << "==========================================\n";
-    cout << "             Make a username\n";
-    cout << "==========================================\n";
-    cin >> usr.username;
+    std::cout << "==========================================\n";
+    std::cout << "             Make a username\n";
+    std::cout << "==========================================\n";
+    std::cin >> usr.username;
     system("clear");
     mainMenu();
 }
 
 void jobMenu() {
 
-    string input;
+    std::string input;
 
     if (jobs.teachingDegreeFinished != true) {
 
-        cout << "==========================================\n";
-        cout << "          Available Jobs\n";
-        cout << "==========================================\n\n";   
+        std::cout << "==========================================\n";
+        std::cout << "          Available Jobs\n";
+        std::cout << "==========================================\n\n";   
 
         // shows the lists of all the current jobs (starter jobs only)
 
-        cout << "Waiter / Waitress - $" << startingJobs.waiter << "\n";
-        cout << "Teacher - Requires University Degree in Teaching - $" << startingJobs.teacher << "\n";
-        cout << "Taxi Driver - $" << startingJobs.taxiDriver << "\n\n";
+        std::cout << "Waiter / Waitress - $" << startingJobs.waiter << "\n";
+        std::cout << "Teacher - Requires University Degree in Teaching - $" << startingJobs.teacher << "\n";
+        std::cout << "Taxi Driver - $" << startingJobs.taxiDriver << "\n\n";
 
-        cout << "Commands:\n";
-        cout << "'taxi' to select taxi job\n";
-        cout << "'waiter' to select waiter / waitress job\n";
-        cout << "'exit' to exit the job menu\n";
-        cout << "'uni' to go to the university menu\n";
-        cin >> input;
+        std::cout << "Commands:\n";
+        std::cout << "'taxi' to select taxi job\n";
+        std::cout << "'waiter' to select waiter / waitress job\n";
+        std::cout << "'exit' to exit the job menu\n";
+        std::cout << "'uni' to go to the university menu\n";
+        std::cin >> input;
 
     system("clear");
 
@@ -588,22 +587,22 @@ void jobMenu() {
         }
     } else {
 
-        cout << "==========================================\n";
-        cout << "          Available Jobs\n";
-        cout << "==========================================\n\n";   
+        std::cout << "==========================================\n";
+        std::cout << "          Available Jobs\n";
+        std::cout << "==========================================\n\n";   
 
         // shows the lists of all the current jobs
 
-        cout << "Waiter / Waitress - $" << startingJobs.waiter << "\n";
-        cout << "Teacher - $" << startingJobs.teacher << "\n";
-        cout << "Taxi Driver - $" << startingJobs.taxiDriver << "\n\n";
+        std::cout << "Waiter / Waitress - $" << startingJobs.waiter << "\n";
+        std::cout << "Teacher - $" << startingJobs.teacher << "\n";
+        std::cout << "Taxi Driver - $" << startingJobs.taxiDriver << "\n\n";
 
-        cout << "Commands:\n";
-        cout << "'taxi' to select taxi job\n";
-        cout << "'waiter' to select waiter / waitress job\n";
-        cout << "'exit' to exit the job menu\n";
-        cout << "'uni' to go to the university menu\n";
-        cin >> input;
+        std::cout << "Commands:\n";
+        std::cout << "'taxi' to select taxi job\n";
+        std::cout << "'waiter' to select waiter / waitress job\n";
+        std::cout << "'exit' to exit the job menu\n";
+        std::cout << "'uni' to go to the university menu\n";
+        std::cin >> input;
 
     system("clear");
 
@@ -620,9 +619,9 @@ void jobMenu() {
         } else if (input == "uni") {
             uniMenu();
         } else {
-            cout << "Not an input.\n";
-            cin.ignore();
-            cin.get();
+            std::cout << "Not an input.\n";
+            std::cin.ignore();
+            std::cin.get();
             system("clear");
             mainMenu();
         }
@@ -635,27 +634,27 @@ void shopMenu() {
         usr.credits = 0;
     }
 
-    string input;
+    std::string input;
 
-    cout << "==========================================\n";
-    cout << "                   Shop\n";
-    cout << "==========================================\n\n";
+    std::cout << "==========================================\n";
+    std::cout << "                   Shop\n";
+    std::cout << "==========================================\n\n";
 
-    cout << "Credits: $" << usr.credits << "\n\n";
+    std::cout << "Credits: $" << usr.credits << "\n\n";
 
-    cout << shop.shopItem1 << " - $" << shop.shopItem1Price << "\n";
-    cout << shop.shopItem2 << " - $" << shop.shopItem2Price << "\n";
-    cout << shop.shopItem3 << " - $" << shop.shopItem3Price << "\n";
-    cout << shop.shopItem4 << " - $" << shop.shopItem4Price << "\n\n";
+    std::cout << shop.shopItem1 << " - $" << shop.shopItem1Price << "\n";
+    std::cout << shop.shopItem2 << " - $" << shop.shopItem2Price << "\n";
+    std::cout << shop.shopItem3 << " - $" << shop.shopItem3Price << "\n";
+    std::cout << shop.shopItem4 << " - $" << shop.shopItem4Price << "\n\n";
 
-    cout << "Commands:\n";
-    cout << "'quantum' to buy the " << shop.shopItem1 << "\n";
-    cout << "'house' to buy the " << shop.shopItem2 << "\n";
-    cout << "'board' to buy the " << shop.shopItem3 << "\n";
-    cout << "'cat' to buy the " << shop.shopItem4 << "\n";
-    cout << "'exit' to exit the shop\n";
+    std::cout << "Commands:\n";
+    std::cout << "'quantum' to buy the " << shop.shopItem1 << "\n";
+    std::cout << "'house' to buy the " << shop.shopItem2 << "\n";
+    std::cout << "'board' to buy the " << shop.shopItem3 << "\n";
+    std::cout << "'cat' to buy the " << shop.shopItem4 << "\n";
+    std::cout << "'exit' to exit the shop\n";
 
-    cin >> input;
+    std::cin >> input;
 
     // checks if the user has enough money to buy it and if they do, gives it to them and adds one to the amount of the product they own
     // clears the screen and redirects them back to the shop menu
@@ -671,9 +670,9 @@ void shopMenu() {
         } else {
             system("clear");
 
-            cout << "==========================================\n";
-            cout << "                   Shop\n";
-            cout << "==========================================\n\n";
+            std::cout << "==========================================\n";
+            std::cout << "                   Shop\n";
+            std::cout << "==========================================\n\n";
 
             ShopInsufficientFunds();
         }
@@ -691,9 +690,9 @@ void shopMenu() {
 
             system("clear");
 
-            cout << "==========================================\n";
-            cout << "                   Shop\n";
-            cout << "==========================================\n\n";
+            std::cout << "==========================================\n";
+            std::cout << "                   Shop\n";
+            std::cout << "==========================================\n\n";
 
             ShopInsufficientFunds();
 
@@ -709,9 +708,9 @@ void shopMenu() {
         } else {
             system("clear");
 
-            cout << "==========================================\n";
-            cout << "                   Shop\n";
-            cout << "==========================================\n\n";
+            std::cout << "==========================================\n";
+            std::cout << "                   Shop\n";
+            std::cout << "==========================================\n\n";
 
             ShopInsufficientFunds();
         }
@@ -728,9 +727,9 @@ void shopMenu() {
         } else {
             system("clear");
 
-            cout << "==========================================\n";
-            cout << "                   Shop\n";
-            cout << "==========================================\n\n";
+            std::cout << "==========================================\n";
+            std::cout << "                   Shop\n";
+            std::cout << "==========================================\n\n";
 
             ShopInsufficientFunds();
         }
@@ -749,11 +748,11 @@ void shopMenu() {
 
 void InsufficientFunds() {
 
-    string input;
+    std::string input;
 
-    cout << "          Insufficient funds.\n";
-    cout << "   'exit' to go back to the main menu\n";
-    cin >> input;
+    std::cout << "          Insufficient funds.\n";
+    std::cout << "   'exit' to go back to the main menu\n";
+    std::cin >> input;
 
     if (input == "exit") {
         system("clear");
@@ -767,11 +766,11 @@ void InsufficientFunds() {
 
 void ShopInsufficientFunds() {
 
-    string input;
+    std::string input;
 
-    cout << "          Insufficient funds.\n";
-    cout << "   'exit' to go back to the shop menu\n";
-    cin >> input;
+    std::cout << "          Insufficient funds.\n";
+    std::cout << "   'exit' to go back to the shop menu\n";
+    std::cin >> input;
 
     if (input == "exit") {
         system("clear");
