@@ -1,17 +1,16 @@
 #include <string>
-using namespace std;
 
 class User {
     public:
 
     int credits;
-    string username;
+    std::string username;
 };
 
 class Jobs {
     public:
 
-    string currentJobStatus;
+    std::string currentJobStatus;
 
     // university degree stuffs
 
@@ -43,10 +42,10 @@ class Jobs {
 
         int UniFee;
 
-        string course1;
-        string course2;
-        string course3;
-        string course4;
+        std::string course1;
+        std::string course2;
+        std::string course3;
+        std::string course4;
 
     };
 };
@@ -54,10 +53,10 @@ class Jobs {
 class shopItems {
     public:
 
-    string shopItem1;
-    string shopItem2;
-    string shopItem3;
-    string shopItem4;
+    std::string shopItem1;
+    std::string shopItem2;
+    std::string shopItem3;
+    std::string shopItem4;
 
     int shopItem1Price;
     int shopItem2Price;
