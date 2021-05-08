@@ -2,6 +2,7 @@
 // #SpaghettiCode
 
 #include <iostream>
+#include <fstream>
 #include "classes.hpp"
 
 // variable declaration
@@ -10,10 +11,13 @@ User usr;
 Jobs jobs;
 Jobs::StarterJobs startingJobs;
 Jobs::University uni;
-shopItems shop; 
+shopItems shop;
+
+std::ofstream file;
+std::ifstream fileRead;
 
 // function declaration
-void classVariables();
+void init();
 int close();
 void usernameSelect();
 void mainMenu();
@@ -27,14 +31,18 @@ void startScreen();
 void endgame();
 
 void startScreen() {
-
     system("clear");
     std::cout << "\n\n  Capitalism In A Nutshell\n";
     std::cout << "    Made by PH03be\n\n";
 
     std::cout << "  Press enter to start\n";
     std::cin.get();
-    usernameSelect();
+
+    if (usr.username == "") {
+        usernameSelect();
+    } else {
+        mainMenu();
+    }
 
 }
 
@@ -47,15 +55,20 @@ void endgame() {
     mainMenu();
 }
 
-void classVariables() {
+void init() {
 
-    // apparently i cant actually initialise the variables in classes.hpp
-    // cause its a "C++11 extension"
-    // so here we are
+    fileRead.open("data.txt");
+
+    getline(fileRead, usr.username);
+    getline(fileRead, jobs.currentJobStatus);
+
+    if (jobs.currentJobStatus == "") {
+        jobs.currentJobStatus = "Unemployed";
+    }
+
+    fileRead.close();
 
     usr.credits = 900;
-
-    jobs.currentJobStatus = "Unemployed";
     jobs.csDegreeFinished = false;
     jobs.teachingDegreeFinished = false;
     jobs.cookingDegreeFinished = false;
@@ -105,6 +118,13 @@ void classVariables() {
 int close() {
     std::cout << "Press enter to close the program:\n";
     std::cin.get();
+
+    file.open("data.txt");
+    file << usr.username << "\n";
+    file << jobs.currentJobStatus;
+
+    file.close();
+
     system("clear");
     return 0;
 }
@@ -406,6 +426,7 @@ void uniMenu() {
 }
 
 void mainMenu() {
+    system("clear");
 
     // floating bits of code
 
@@ -479,7 +500,7 @@ void mainMenu() {
             std::cout << "'cook' to work\n";
         } else if (jobs.currentJobStatus == "Lecturer") {
             std::cout << "'talk' to work\n";
-        }
+        }    
     }
 
     std::cout << "'exit' to exit the program\n";
@@ -489,7 +510,7 @@ void mainMenu() {
     std::cin >> input;
     std::cin.ignore();
 
-    if (input == "exit" /* use _khit() */) {
+    if (input == "exit") {
         system("clear");
         close();
     } else if (input == "jobs" || input == "job") {
@@ -520,6 +541,10 @@ void mainMenu() {
             mainMenu();
         } else if (jobs.currentJobStatus == "Lecturer" && input == "talk") {
             usr.credits = usr.credits + jobs.lecturer;
+            system("clear");
+            mainMenu();
+        } else if (jobs.currentJobStatus == "Chef" && input == "cook") {
+            usr.credits = usr.credits + jobs.chef;
             system("clear");
             mainMenu();
         } else {
@@ -786,6 +811,6 @@ void ShopInsufficientFunds() {
 }
 
 int main() {
-    classVariables();
+    init();
     startScreen();
 }
