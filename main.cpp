@@ -57,18 +57,25 @@ void endgame() {
 
 void init() {
 
+    usr.starterCredits = 900;
+
     fileRead.open("data.txt");
 
     getline(fileRead, usr.username);
     getline(fileRead, jobs.currentJobStatus);
 
-    if (jobs.currentJobStatus == "") {
-        jobs.currentJobStatus = "Unemployed";
-    }
-
     fileRead.close();
 
-    usr.credits = 900;
+    if (usr.username != "" && jobs.currentJobStatus != "") {
+        usr.credits = usr.starterCredits * usr.username.size();
+    } else {
+        usr.credits = usr.starterCredits;
+    }
+
+    if (jobs.currentJobStatus == "") {
+        jobs.currentJobStatus = "Unemployed";
+    }   
+
     jobs.csDegreeFinished = false;
     jobs.teachingDegreeFinished = false;
     jobs.cookingDegreeFinished = false;
