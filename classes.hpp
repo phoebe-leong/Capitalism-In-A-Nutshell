@@ -3,6 +3,7 @@
 class User {
     public:
 
+    int starterCredits;
     int credits;
     std::string username;
 };
