@@ -7,6 +7,7 @@
 
 // variable declaration
 
+std::string difficultyLvl;
 User usr;
 Jobs jobs;
 Jobs::StarterJobs startingJobs;
@@ -26,11 +27,21 @@ void uniMenu();
 void shopMenu();
 void InsufficientFunds();
 void ShopInsufficientFunds();
+void difficulty();
 
 void startScreen();
 void endgame();
 
 void startScreen() {
+
+    fileRead.open("data.txt");
+    getline(fileRead, usr.username);
+    getline(fileRead, jobs.currentJobStatus);
+    getline(fileRead, difficultyLvl);
+    fileRead.close();
+
+    init();
+
     system("clear");
     std::cout << "\n\n  Capitalism In A Nutshell\n";
     std::cout << "    Made by PH03be\n\n";
@@ -58,23 +69,6 @@ void endgame() {
 void init() {
 
     usr.starterCredits = 900;
-
-    fileRead.open("data.txt");
-
-    getline(fileRead, usr.username);
-    getline(fileRead, jobs.currentJobStatus);
-
-    fileRead.close();
-
-    if (usr.username != "" && jobs.currentJobStatus != "") {
-        usr.credits = usr.starterCredits * usr.username.size();
-    } else {
-        usr.credits = usr.starterCredits;
-    }
-
-    if (jobs.currentJobStatus == "") {
-        jobs.currentJobStatus = "Unemployed";
-    }   
 
     jobs.csDegreeFinished = false;
     jobs.teachingDegreeFinished = false;
@@ -118,6 +112,64 @@ void init() {
     shop.item4Amount = 0;
 
     shop.hasAnItem = false;
+
+    if (jobs.currentJobStatus == "") {
+        jobs.currentJobStatus = "Unemployed";
+    }   
+
+    if (difficultyLvl == "Easy" || difficultyLvl == "easy") {
+        usr.credits = usr.starterCredits * 2;
+        shop.item1Amount = shop.item1Amount - 100;
+        shop.item2Amount = shop.item2Amount - 50;
+        shop.item3Amount = shop.item3Amount - 50;
+        shop.item4Amount = shop.item4Amount - 50;
+
+        uni.UniFee = uni.UniFee - 100;
+    } else if (difficultyLvl == "Normal" || difficultyLvl == "normal") {
+        usr.credits = usr.starterCredits;
+    } else {
+        usr.credits = 0;
+        shop.item1Amount = shop.item1Amount * 50;
+        shop.item2Amount = shop.item2Amount * 50;
+        shop.item3Amount = shop.item3Amount * 50;
+        shop.item4Amount = shop.item4Amount * 50;
+
+        uni.UniFee = uni.UniFee * 100;
+    }
+}
+
+void difficulty() {
+    std::cout << "Choose a difficulty: Easy, Normal, Impossible\n";
+    std::cin >> difficultyLvl;
+
+    if (difficultyLvl == "Easy") {
+        init();
+        mainMenu();
+    } else if (difficultyLvl == "easy") {
+        init();
+        mainMenu();
+    } else if (difficultyLvl == "Normal") {
+        init();
+        mainMenu();
+    } else if (difficultyLvl == "normal") {
+        init();
+        mainMenu();
+    } else if (difficultyLvl == "Impossible") {
+        init();
+        mainMenu();
+    } else if (difficultyLvl == "impossible") {
+        init();
+        mainMenu();
+    } else {
+        system("clear");
+        std::cout << "Please choose a difficulty.\n";
+        std::cout << "Press enter to go back to the difficulty select menu.\n";
+        std::cin.ignore();
+        std::cin.get();
+        system("clear");
+        difficulty();
+    }
+
 }
 
 // universal close function (of course)
@@ -128,7 +180,8 @@ int close() {
 
     file.open("data.txt");
     file << usr.username << "\n";
-    file << jobs.currentJobStatus;
+    file << jobs.currentJobStatus << "\n";
+    file << difficultyLvl;
 
     file.close();
 
@@ -571,6 +624,13 @@ void usernameSelect() {
     std::cout << "==========================================\n";
     std::cin >> usr.username;
     system("clear");
+
+    if (difficultyLvl == "") {
+        difficulty();
+    } else {
+        mainMenu();
+    }
+
     mainMenu();
 }
 
@@ -818,6 +878,5 @@ void ShopInsufficientFunds() {
 }
 
 int main() {
-    init();
     startScreen();
 }
