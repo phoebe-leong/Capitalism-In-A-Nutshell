@@ -7,3 +7,10 @@ Few things to note:
 - Once you get a job through the jobs menu, the program gives you fifteen times the amount of normal pay.
 - Once you get a degree, the job associated with that degree gets automatically assigned to you.
 - When entering the command to work, you can simply type the command as many times as you like on the same input line with a space in between each command.
+
+## How to run the program
+1. Download the latest stable release.
+2. Navigate to the release on your computer.
+3. Open a new Terminal / Command Prompt window in the directory.
+4. Type `./main` into the window and press enter.
+5. The program should now run.
