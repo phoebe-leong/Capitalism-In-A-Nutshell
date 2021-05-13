@@ -127,7 +127,7 @@ void init() {
         uni.UniFee = uni.UniFee - 100;
     } else if (difficultyLvl == "Normal" || difficultyLvl == "normal") {
         usr.credits = usr.starterCredits;
-    } else {
+    } else if (difficultyLvl == "Impossible" || difficultyLvl == "impossible") {
         usr.credits = 0;
         shop.item1Amount = shop.item1Amount * 50;
         shop.item2Amount = shop.item2Amount * 50;
@@ -135,6 +135,8 @@ void init() {
         shop.item4Amount = shop.item4Amount * 50;
 
         uni.UniFee = uni.UniFee * 100;
+    } else if (difficultyLvl == "") {
+        usr.credits = usr.starterCredits;
     }
 }
 
@@ -182,7 +184,6 @@ int close() {
     file << usr.username << "\n";
     file << jobs.currentJobStatus << "\n";
     file << difficultyLvl;
-
     file.close();
 
     system("clear");
@@ -197,284 +198,93 @@ void uniMenu() {
 
     std::cout << "==========================================\n";
     std::cout << "           University Courses\n";
-    std::cout << "==========================================\n\n";
+    std::cout << "==========================================\n\n";       
 
     if (usr.credits >= uni.UniFee) {
 
-    std::cout << "Uni Course Fee: $" << uni.UniFee << "\n\n";
+        if (jobs.csDegreeFinished == false) {
+            if (shop.hasItem1 == true) {
+                std::cout << "Computer Science - Requires a previous degree in another field\n";
+            } else if (jobs.hasUniversityDegree == true) {
+                std::cout << "Computer Science - Requires 'Quantum Computer'\n";
+            } else if (jobs.hasUniversityDegree == true && shop.hasItem1 == true) {
+                std::cout << "Computer Science - Gives access to 'Programmer' job\n";
+            }   
+        }
 
-    // if the user meets specific requirements, show specific text
+        if (jobs.teachingDegreeFinished == false) {
+            std::cout << "Teaching - Gives access to 'Teaching' job\n";
+        }
 
-     if (jobs.hasUniversityDegree == true && shop.hasItem1 == true) {
-        std::cout << "Computer Science - Gives access to 'Programmer' job\n";
-        std::cout << "Teaching - Gives access to 'Teaching' job\n";
-        std::cout << "Cooking - Gives access to 'Chef' job\n";
+        if (jobs.teachingDegreeFinished == false) {
+            std::cout << "Talking - Requires 'Teaching' degree\n";
+        } else {
+            std::cout << "Talking - Gives access to 'Lecturer' job\n";
+        }
+
+        if (jobs.cookingDegreeFinished == false) {
+            std::cout << "Cooking - Gives access to 'Chef' job\n";
+        }
 
         std::cout << "\n";
-        std::cout << "Commands:\n";
-        std::cout << "'cs' to choose the Computer Science degree\n";
-        std::cout << "'teaching' to choose the Teaching degree\n";
-        std::cout << "'cooking' to choose the Cooking degree\n";
-        std::cout << "'exit' to exit the university menu\n";
+        std::cout << "Commands\n";
 
+        if (jobs.csDegreeFinished == false) {
+            if (jobs.hasUniversityDegree == true && shop.hasItem1 == true) {
+                std::cout << "'cs' to choose the Computer Science degree\n"; 
+            }
+        }
+
+        if (jobs.teachingDegreeFinished == false) {
+            std::cout << "'teaching' to choose the Teaching degree\n";
+        }
+
+        if (jobs.teachingDegreeFinished == true && jobs.talkingDegreeFinished == false) {
+            std::cout << "'talking' to choose the Talking degree\n";
+        }
+
+        if (jobs.cookingDegreeFinished == false) {
+            std::cout << "'cooking' to choose the Cooking degree\n";
+        }
+
+        std::cout << "'exit' to exit the university menu\n";
         std::cin >> input;
 
-        if (input == "cs") {
-            usr.credits = usr.credits - uni.UniFee;
-            jobs.csDegreeFinished = true;
-            jobs.currentJobStatus = "Programmer";
-            system("clear");
-            mainMenu();
-        } else if (input == "teaching") {
-            usr.credits = usr.credits - uni.UniFee;
-            jobs.teachingDegreeFinished = true;
-            jobs.currentJobStatus = "Teacher";
-            system("clear");
-            mainMenu();
-        } else if (input == "cooking") {
-            usr.credits = usr.credits - uni.UniFee;
-            jobs.cookingDegreeFinished = true;
-            jobs.currentJobStatus = "Chef";
-            system("clear");
-            mainMenu();
-        } else if (input == "exit") {
-            system("clear");
-            mainMenu();
-        } else {
+        if (jobs.csDegreeFinished == false) {
+            if (jobs.hasUniversityDegree == true && shop.hasItem1 == true && input == "cs") {
+                jobs.currentJobStatus = "Programmer";
+                usr.credits = usr.credits + (jobs.programmer * 2);
+                system("clear");
+                mainMenu();
+            }
+        }
+
+        if (jobs.teachingDegreeFinished == false && input == "teaching") {
+            jobs.currentJobStatus = "Teaching";
+            usr.credits = usr.credits + (startingJobs.teacher * 2);
             system("clear");
             mainMenu();
         }
 
-    } else if (jobs.teachingDegreeFinished  == true && jobs.hasUniversityDegree == true && shop.hasItem1 == true) {
-        std::cout << "Computer Science - Gives access to 'Programmer job'\n";
-        std::cout << "Teaching - Gives access to 'Teaching' job\n";
-        std::cout << "Talking - Gives access to 'Lecturer' job\n";
-        std::cout << "Cooking - Gives access to 'Chef' job\n\n";
-
-        std::cout << "Commands:\n";
-        std::cout << "'cs' to choose the Computer Science degree\n";
-        std::cout << "'teaching' to choose the Teaching degree\n";
-        std::cout << "'cooking' to choose the Cooking degree\n";
-        std::cout << "'talking' to choose the Talking degree\n";
-        std::cout << "'exit' to exit the university menu\n";
-        
-        std::cin >> input;
-
-        if (input == "teaching") {
-            usr.credits = usr.credits - uni.UniFee;
-            jobs.teachingDegreeFinished = true;
-            jobs.hasUniversityDegree = true;
-            jobs.currentJobStatus = "Teacher";
-            system("clear");
-            mainMenu();
-        } else if (input == "cooking") {
-            usr.credits = usr.credits - uni.UniFee;
-            jobs.cookingDegreeFinished = true;
-            jobs.currentJobStatus = "Chef";
-            jobs.hasUniversityDegree = true;
-            system("clear");
-            mainMenu();
-        } else if (input == "cs") {
-            usr.credits = usr.credits - uni.UniFee;
-            jobs.csDegreeFinished = true;
-            jobs.currentJobStatus = "Programmer";
-            system("clear");
-            mainMenu();
-        } else if (input == "talking") {
-            usr.credits = usr.credits - uni.UniFee;
-            jobs.talkingDegreeFinished = true;
-            system("clear");
-            mainMenu();
-        } else if (input == "exit") {
-            system("clear");
-            mainMenu();
-        } else {
-            system("clear");
-            mainMenu();
-        }
-    }  else if (jobs.hasUniversityDegree == true && jobs.teachingDegreeFinished == true) {
-        std::cout << "Computer Science - Requires 'Quantum Computer'\n";
-        std::cout << "Teaching - Gives access to 'Teaching' job\n";
-        std::cout << "Talking - Gives access to 'Lecturer' job\n";
-        std::cout << "Cooking - Gives access to 'Chef' job\n\n";
-
-        std::cout << "Commands:\n";
-        std::cout << "'teaching' to choose the Teaching degree\n";
-        std::cout << "'cooking' to choose the Cooking degree\n";
-        std::cout << "'talking' to choose the Talking degree\n";
-        std::cout << "'exit' to exit the university menu\n";
-        
-        std::cin >> input;
-
-        if (input == "teaching") {
-            usr.credits = usr.credits - uni.UniFee;
-            jobs.teachingDegreeFinished = true;
-            jobs.hasUniversityDegree = true;
-            jobs.currentJobStatus = "Teacher";
-            system("clear");
-            mainMenu();
-        } else if (input == "cooking") {
-            usr.credits = usr.credits - uni.UniFee;
-            jobs.cookingDegreeFinished = true;
-            jobs.hasUniversityDegree = true;
-            jobs.currentJobStatus = "Chef";
-            system("clear");
-            mainMenu();
-        } else if (input == "talking") {
-            usr.credits = usr.credits - uni.UniFee;
-            jobs.talkingDegreeFinished = true;
+        if (jobs.teachingDegreeFinished == true && jobs.talkingDegreeFinished == false && input == "talking") {
             jobs.currentJobStatus = "Lecturer";
-            system("clear");
-            mainMenu();
-        } else if (input == "exit") {
-            system("clear");
-            mainMenu();
-        } else {
+            usr.credits = usr.credits + (jobs.lecturer * 2);
             system("clear");
             mainMenu();
         }
-    } else if (jobs.hasUniversityDegree == true) {
-        std::cout << "Computer Science - Requires 'Quantum Computer'\n";
-        std::cout << "Teaching - Gives access to 'Teaching' job\n";
-        std::cout << "Talking - Requires 'Teaching' degree\n";
-        std::cout << "Cooking - Gives access to 'Chef' job\n\n";
 
-        std::cout << "Commands:\n";
-        std::cout << "'teaching' to choose the Teaching degree\n";
-        std::cout << "'cooking' to choose the Cooking degree\n";
-        std::cout << "'exit' to exit the university menu\n";
-        
-        std::cin >> input;
-
-        if (input == "teaching") {
-            usr.credits = usr.credits - uni.UniFee;
-            jobs.teachingDegreeFinished = true;
-            jobs.hasUniversityDegree = true;
-            jobs.currentJobStatus = "Teacher";
-            system("clear");
-            mainMenu();
-        } else if (input == "cooking") {
-            usr.credits = usr.credits - uni.UniFee;
-            jobs.cookingDegreeFinished = true;
-            jobs.hasUniversityDegree = true;
+        if (jobs.cookingDegreeFinished == false) {
             jobs.currentJobStatus = "Chef";
-            system("clear");
-            mainMenu();
-        } else if (input == "exit") {
-            system("clear");
-            mainMenu();
-        } else {
+            usr.credits = usr.credits + (jobs.chef * 2);
             system("clear");
             mainMenu();
         }
-    } else if (shop.hasItem1 == true) {
-        std::cout << "Computer Science - Requires a previous degree in another field\n";
-        std::cout << "Teaching - Gives access to 'Teaching' job\n";
-        std::cout << "Talking - Requires 'Teaching' degree\n";
-        std::cout << "Cooking - Gives access to 'Chef' job\n\n";
 
-        std::cout << "Commands:\n";
-        std::cout << "'teaching' to choose the Teaching degree\n";
-        std::cout << "'cooking' to choose the Cooking degree\n";
-        std::cout << "'exit' to exit the university menu\n";
-        
-        std::cin >> input;
-
-        if (input == "teaching") {
-            usr.credits = usr.credits - uni.UniFee;
-            jobs.teachingDegreeFinished = true;
-            jobs.hasUniversityDegree = true;
-            jobs.currentJobStatus = "Teacher";
-            system("clear");
-            mainMenu();
-        } else if (input == "cooking") {
-            usr.credits = usr.credits - uni.UniFee;
-            jobs.cookingDegreeFinished = true;
-            jobs.hasUniversityDegree = true;
-            jobs.currentJobStatus = "Chef";
-            system("clear");
-            mainMenu();
-        } else if (input == "exit") {
-            system("clear");
-            mainMenu();
-        } else {
+        if (input == "exit") {
             system("clear");
             mainMenu();
         }
-    } else if (shop.hasItem1 == true && jobs.teachingDegreeFinished == true) {
-        std::cout << "Computer Science - Requires a previous degree in another field\n";
-        std::cout << "Teaching - Gives access to 'Teaching' job\n";
-        std::cout << "Talking - Gives access to 'Lecturer' job\n";
-        std::cout << "Cooking - Gives access to 'Chef' job\n\n";
 
-        std::cout << "Commands:\n";
-        std::cout << "'teaching' to choose the Teaching degree\n";
-        std::cout << "'cooking' to choose the Cooking degree\n";
-        std::cout << "'talking' to choose the Talking degree\n";
-        std::cout << "'exit' to exit the university menu\n";
-        
-        std::cin >> input;
-
-        if (input == "teaching") {
-            usr.credits = usr.credits - uni.UniFee;
-            jobs.teachingDegreeFinished = true;
-            jobs.hasUniversityDegree = true;
-            jobs.currentJobStatus = "Teacher";
-            system("clear");
-            mainMenu();
-        } else if (input == "cooking") {
-            usr.credits = usr.credits - uni.UniFee;
-            jobs.cookingDegreeFinished = true;
-            jobs.hasUniversityDegree = true;
-            jobs.currentJobStatus = "Chef";
-            system("clear");
-            mainMenu();
-        } else if (input == "talking") {
-            usr.credits = usr.credits - uni.UniFee;
-            jobs.talkingDegreeFinished = true;
-            jobs.currentJobStatus = "Lecturer";
-        } else if (input == "exit") {
-            system("clear");
-            mainMenu();
-        } else {
-            system("clear");
-            mainMenu();
-        }
-    } else {
-        std::cout << "Computer Science - Requires a previous degree in another field and 'Quantum Computer'\n";
-        std::cout << "Teaching - Gives access to 'Teaching' job\n";
-        std::cout << "Talking - Requires 'Teaching' degree\n";
-        std::cout << "Cooking - Gives access to 'Chef' job\n\n";
-
-        std::cout << "Commands:\n";
-        std::cout << "'teaching' to choose the Teaching degree\n";
-        std::cout << "'cooking' to choose the Cooking degree\n";
-        std::cout << "'exit' to exit the university menu\n";
-        
-        std::cin >> input;
-
-        if (input == "teaching") {
-            usr.credits = usr.credits - uni.UniFee;
-            jobs.teachingDegreeFinished = true;
-            jobs.hasUniversityDegree = true;
-            jobs.currentJobStatus = "Teacher";
-            system("clear");
-            mainMenu();
-        } else if (input == "cooking") {
-            usr.credits = usr.credits - uni.UniFee;
-            jobs.cookingDegreeFinished = true;
-            jobs.hasUniversityDegree = true;
-            jobs.currentJobStatus = "Chef";
-            system("clear");
-            mainMenu();
-        } else if (input == "exit") {
-            system("clear");
-            mainMenu();
-        } else {
-            system("clear");
-            mainMenu();
-        }
-    }   
     } else {
 
         std::cout << "          You need: $" << uni.UniFee << "\n\n"; 
