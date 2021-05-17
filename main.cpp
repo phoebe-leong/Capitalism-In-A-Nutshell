@@ -476,11 +476,11 @@ void jobMenu() {
 
         } else if (input == "taxi") {
             jobs.currentJobStatus = "Taxi Driver";
-            usr.credits = usr.credits + (startingJobs.taxiDriver * 15);
+            usr.credits = usr.credits + (startingJobs.taxiDriver * 2);
             mainMenu(); 
         } else if (input == "waiter") {
             jobs.currentJobStatus = "Waiter";
-            usr.credits = usr.credits + (startingJobs.waiter * 15);
+            usr.credits = usr.credits + (startingJobs.waiter * 2);
             mainMenu();
         } else if (input == "uni") {
             uniMenu();
