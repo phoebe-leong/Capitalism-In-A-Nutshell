@@ -49,7 +49,7 @@ void startScreen() {
     std::cout << "  Press enter to start\n";
     std::cin.get();
 
-    if (usr.username == "") {
+    if (usr.username.empty()) {
         usernameSelect();
     } else {
         mainMenu();
@@ -113,7 +113,7 @@ void init() {
 
     shop.hasAnItem = false;
 
-    if (jobs.currentJobStatus == "") {
+    if (jobs.currentJobStatus.empty()) {
         jobs.currentJobStatus = "Unemployed";
     }   
 
@@ -135,7 +135,7 @@ void init() {
         shop.item4Amount = shop.item4Amount * 50;
 
         uni.UniFee = uni.UniFee * 100;
-    } else if (difficultyLvl == "") {
+    } else if (difficultyLvl.empty()) {
         usr.credits = usr.starterCredits;
     }
 }
@@ -432,10 +432,10 @@ void usernameSelect() {
     std::cout << "==========================================\n";
     std::cout << "             Make a username\n";
     std::cout << "==========================================\n";
-    std::cin >> usr.username;
+    std::getline(std::cin, usr.username);
     system("clear");
 
-    if (difficultyLvl == "") {
+    if (difficultyLvl.empty()) {
         difficulty();
     } else {
         mainMenu();
@@ -472,7 +472,6 @@ void jobMenu() {
         if (input == "exit") {
             mainMenu();
 
-            // visually displays the job on the menu and assigns them 15 time the normal salary on hire
 
         } else if (input == "taxi") {
             jobs.currentJobStatus = "Taxi Driver";
