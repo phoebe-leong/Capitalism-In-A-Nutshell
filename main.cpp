@@ -25,10 +25,8 @@ void mainMenu();
 void jobMenu();
 void uniMenu();
 void shopMenu();
-void InsufficientFunds();
-void ShopInsufficientFunds();
 void difficulty();
-
+void InsufficientFunds();
 void startScreen();
 void endgame();
 
@@ -119,22 +117,22 @@ void init() {
 
     if (difficultyLvl == "Easy" || difficultyLvl == "easy") {
         usr.credits = usr.starterCredits * 2;
-        shop.item1Amount = shop.item1Amount - 100;
-        shop.item2Amount = shop.item2Amount - 50;
-        shop.item3Amount = shop.item3Amount - 50;
-        shop.item4Amount = shop.item4Amount - 50;
+        shop.item1Amount -= 100;
+        shop.item2Amount -= 50;
+        shop.item3Amount -= 50;
+        shop.item4Amount -= 50;
 
-        uni.UniFee = uni.UniFee - 100;
+        uni.UniFee -= 100;
     } else if (difficultyLvl == "Normal" || difficultyLvl == "normal") {
         usr.credits = usr.starterCredits;
     } else if (difficultyLvl == "Impossible" || difficultyLvl == "impossible") {
         usr.credits = 0;
-        shop.item1Amount = shop.item1Amount * 50;
-        shop.item2Amount = shop.item2Amount * 50;
-        shop.item3Amount = shop.item3Amount * 50;
-        shop.item4Amount = shop.item4Amount * 50;
+        shop.item1Amount *= 50;
+        shop.item2Amount *= 50;
+        shop.item3Amount *= 50;
+        shop.item4Amount *= 50;
 
-        uni.UniFee = uni.UniFee * 100;
+        uni.UniFee *= 100;
     } else if (difficultyLvl.empty()) {
         usr.credits = usr.starterCredits;
     }
@@ -253,7 +251,7 @@ void uniMenu() {
         if (jobs.csDegreeFinished == false) {
             if (jobs.hasUniversityDegree == true && shop.hasItem1 == true && input == "cs") {
                 jobs.currentJobStatus = "Programmer";
-                usr.credits = usr.credits + (jobs.programmer * 2);
+                usr.credits += jobs.programmer * 2;
                 system("clear");
                 mainMenu();
             }
@@ -261,21 +259,21 @@ void uniMenu() {
 
         if (jobs.teachingDegreeFinished == false && input == "teaching") {
             jobs.currentJobStatus = "Teaching";
-            usr.credits = usr.credits + (startingJobs.teacher * 2);
+            usr.credits += startingJobs.teacher * 2;
             system("clear");
             mainMenu();
         }
 
         if (jobs.teachingDegreeFinished == true && jobs.talkingDegreeFinished == false && input == "talking") {
             jobs.currentJobStatus = "Lecturer";
-            usr.credits = usr.credits + (jobs.lecturer * 2);
+            usr.credits += jobs.lecturer * 2;
             system("clear");
             mainMenu();
         }
 
         if (jobs.cookingDegreeFinished == false) {
             jobs.currentJobStatus = "Chef";
-            usr.credits = usr.credits + (jobs.chef * 2);
+            usr.credits += jobs.chef * 2;
             system("clear");
             mainMenu();
         }
@@ -394,27 +392,27 @@ void mainMenu() {
         shopMenu();
     } else if (jobs.currentJobStatus != "Unemployed") {
         if (jobs.currentJobStatus == "Taxi Driver" && input == "drive") {
-            usr.credits = usr.credits + startingJobs.taxiDriver;
+            usr.credits += startingJobs.taxiDriver;
             system("clear");
             mainMenu();
         } else if (jobs.currentJobStatus == "Waiter" && input == "serve") {
-            usr.credits = usr.credits + startingJobs.waiter;
+            usr.credits += startingJobs.waiter;
             system("clear");
             mainMenu();
         } else if (jobs.currentJobStatus == "Teacher" && input == "teach") {
-            usr.credits = usr.credits + startingJobs.teacher;
+            usr.credits += startingJobs.teacher;
             system("clear");
             mainMenu();
         } else if (jobs.currentJobStatus == "Programmer" && input == "code") {
-            usr.credits = usr.credits + jobs.programmer;
+            usr.credits += jobs.programmer;
             system("clear");
             mainMenu();
         } else if (jobs.currentJobStatus == "Lecturer" && input == "talk") {
-            usr.credits = usr.credits + jobs.lecturer;
+            usr.credits += jobs.lecturer;
             system("clear");
             mainMenu();
         } else if (jobs.currentJobStatus == "Chef" && input == "cook") {
-            usr.credits = usr.credits + jobs.chef;
+            usr.credits += jobs.chef;
             system("clear");
             mainMenu();
         } else {
@@ -475,11 +473,11 @@ void jobMenu() {
 
         } else if (input == "taxi") {
             jobs.currentJobStatus = "Taxi Driver";
-            usr.credits = usr.credits + (startingJobs.taxiDriver * 2);
+            usr.credits += startingJobs.taxiDriver * 2;
             mainMenu(); 
         } else if (input == "waiter") {
             jobs.currentJobStatus = "Waiter";
-            usr.credits = usr.credits + (startingJobs.waiter * 2);
+            usr.credits += startingJobs.waiter * 2;
             mainMenu();
         } else if (input == "uni") {
             uniMenu();
@@ -511,11 +509,11 @@ void jobMenu() {
             mainMenu();
         } else if (input == "taxi") {
             jobs.currentJobStatus = "Taxi Driver";
-            usr.credits = usr.credits + startingJobs.taxiDriver;
+            usr.credits += startingJobs.taxiDriver;
             mainMenu(); 
         } else if (input == "waiter") {
             jobs.currentJobStatus = "Waiter";
-            usr.credits = usr.credits + startingJobs.waiter;
+            usr.credits += startingJobs.waiter;
             mainMenu();
         } else if (input == "uni") {
             uniMenu();
@@ -563,7 +561,7 @@ void shopMenu() {
     if (input == "quantum") {
 
         if (usr.credits >= shop.shopItem1Price) {
-        usr.credits = usr.credits - shop.shopItem1Price;
+        usr.credits -= shop.shopItem1Price;
         shop.hasItem1 = true;
         shop.item1Amount++;
         system("clear");
@@ -575,13 +573,14 @@ void shopMenu() {
             std::cout << "                   Shop\n";
             std::cout << "==========================================\n\n";
 
-            ShopInsufficientFunds();
+            std::cin.ignore();
+            InsufficientFunds();
         }
 
     } else if (input == "house") {
 
         if (usr.credits >= shop.shopItem2Price) {
-        usr.credits = usr.credits - shop.shopItem2Price;
+        usr.credits -= shop.shopItem2Price;
         shop.hasItem2 = true;
         shop.item2Amount++;
         shop.hasAnItem = true;
@@ -595,13 +594,14 @@ void shopMenu() {
             std::cout << "                   Shop\n";
             std::cout << "==========================================\n\n";
 
-            ShopInsufficientFunds();
+            std::cin.ignore();
+            InsufficientFunds();
 
         }
     }  else if (input == "board") {
 
         if (usr.credits >= shop.shopItem3Price) {
-            usr.credits = usr.credits - shop.shopItem3Price;
+            usr.credits -= shop.shopItem3Price;
             shop.hasItem4 = true;
             shop.item3Amount++;
             system("clear");
@@ -613,13 +613,14 @@ void shopMenu() {
             std::cout << "                   Shop\n";
             std::cout << "==========================================\n\n";
 
-            ShopInsufficientFunds();
+            std::cin.ignore();
+            InsufficientFunds();
         }
 
     }  else if (input == "cat") {
 
         if (usr.credits >= shop.shopItem4Price) {
-            usr.credits = usr.credits - shop.shopItem4Price;
+            usr.credits -= shop.shopItem4Price;
             shop.hasItem4 = true;
             shop.item4Amount++;
             shop.hasAnItem = true;
@@ -632,7 +633,8 @@ void shopMenu() {
             std::cout << "                   Shop\n";
             std::cout << "==========================================\n\n";
 
-            ShopInsufficientFunds();
+            std::cin.ignore();
+            InsufficientFunds();
         }
 
     } else if (input == "exit") {
@@ -643,9 +645,6 @@ void shopMenu() {
         mainMenu();
     }
 }
-
-// shows that the user doesn't have enough money
-// i had to make another function for the shop because otherwise it just skipped over everything
 
 void InsufficientFunds() {
 
@@ -662,27 +661,6 @@ void InsufficientFunds() {
         system("clear");
         uniMenu();
     }
-
-}
-
-void ShopInsufficientFunds() {
-
-    std::string input;
-
-    std::cout << "          Insufficient funds.\n";
-    std::cout << "   'exit' to go back to the shop menu\n";
-    std::cin >> input;
-
-    if (input == "exit") {
-        system("clear");
-        shopMenu();
-    } else {
-        system("clear");
-        shopMenu();
-    }
-
-    system("clear");
-    mainMenu(); 
 
 }
 
