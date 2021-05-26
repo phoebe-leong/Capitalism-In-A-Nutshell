@@ -32,8 +32,6 @@ class Jobs {
     bool cookingDegreeFinished;
     bool talkingDegreeFinished;
 
-    bool hasUniversityDegree;
-
     // job = {pay per min}
 
     int programmer; // requires university degree in computer science
@@ -54,6 +52,8 @@ class Jobs {
         public:
 
         int UniFee;
+
+        int numOfDegrees;
 
         std::string course1;
         std::string course2;
