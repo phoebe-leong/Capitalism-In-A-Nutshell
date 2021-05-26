@@ -6,6 +6,18 @@ class User {
     int starterCredits;
     int credits;
     std::string username;
+
+    class PowerUps {
+        public:
+
+        int pwrUpWaitTime;
+        int powerUpMultiplier;
+
+        int powerUpCommandNum;
+        int maxPowerUpCommands;
+
+        bool pwrUpActive;
+    };
 };
 
 class Jobs {
@@ -58,11 +70,13 @@ class shopItems {
     std::string shopItem2;
     std::string shopItem3;
     std::string shopItem4;
+    std::string shopItem5;
 
     int shopItem1Price;
     int shopItem2Price;
     int shopItem3Price;
     int shopItem4Price;
+    int shopItem5Price;
 
     bool hasItem1;
     bool hasItem2;
