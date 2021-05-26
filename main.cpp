@@ -9,6 +9,7 @@
 
 std::string difficultyLvl;
 User usr;
+User::PowerUps pwrUps;
 Jobs jobs;
 Jobs::StarterJobs startingJobs;
 Jobs::University uni;
@@ -58,7 +59,6 @@ void startScreen() {
 void endgame() {
     std::cout << "Congratulations! You bought every item!\n";
     std::cout << "This means that you won!\n";
-    std::cout << "GG\n";
     std::cin.get();
     system("clear");
     mainMenu();
@@ -67,6 +67,12 @@ void endgame() {
 void init() {
 
     usr.starterCredits = 900;
+
+    pwrUps.powerUpCommandNum = 0;
+    pwrUps.maxPowerUpCommands = 10;
+    pwrUps.powerUpMultiplier = 200;
+
+    pwrUps.pwrUpActive = false;
 
     jobs.csDegreeFinished = false;
     jobs.teachingDegreeFinished = false;
@@ -93,21 +99,18 @@ void init() {
     shop.shopItem2 = "Big house";
     shop.shopItem3 = "Hoverboard";
     shop.shopItem4 = "Cat";
+    shop.shopItem5 = "Pay Multiplier Power Up";
 
     shop.shopItem1Price = 100000;
     shop.shopItem2Price = 1000;
     shop.shopItem3Price = 9000;
     shop.shopItem4Price = 50;
+    shop.shopItem5Price = shop.shopItem2Price * 2;
 
     shop.hasItem1 = false;
     shop.hasItem2 = false;
     shop.hasItem3 = false;
     shop.hasItem4 = false;
-
-    shop.item1Amount = 0;
-    shop.item2Amount = 0;
-    shop.item3Amount = 0;
-    shop.item4Amount = 0;
 
     shop.hasAnItem = false;
 
@@ -117,6 +120,9 @@ void init() {
 
     if (difficultyLvl == "Easy" || difficultyLvl == "easy") {
         usr.credits = usr.starterCredits * 2;
+        pwrUps.maxPowerUpCommands *= 2;
+        pwrUps.powerUpMultiplier *=  2;
+
         shop.item1Amount -= 100;
         shop.item2Amount -= 50;
         shop.item3Amount -= 50;
@@ -127,10 +133,14 @@ void init() {
         usr.credits = usr.starterCredits;
     } else if (difficultyLvl == "Impossible" || difficultyLvl == "impossible") {
         usr.credits = 0;
-        shop.item1Amount *= 50;
+        shop.item1Amount *= 100;
         shop.item2Amount *= 50;
         shop.item3Amount *= 50;
         shop.item4Amount *= 50;
+
+        pwrUps.powerUpMultiplier /= 20;
+
+        pwrUps.maxPowerUpCommands /= 2;
 
         uni.UniFee *= 100;
     } else if (difficultyLvl.empty()) {
@@ -175,8 +185,6 @@ void difficulty() {
 // universal close function (of course)
 
 int close() {
-    std::cout << "Press enter to close the program:\n";
-    std::cin.get();
 
     file.open("data.txt");
     file << usr.username << "\n";
@@ -258,7 +266,7 @@ void uniMenu() {
         }
 
         if (jobs.teachingDegreeFinished == false && input == "teaching") {
-            jobs.currentJobStatus = "Teaching";
+            jobs.currentJobStatus = "Teacher";
             usr.credits += startingJobs.teacher * 2;
             system("clear");
             mainMenu();
@@ -296,8 +304,6 @@ void uniMenu() {
 void mainMenu() {
     system("clear");
 
-    // floating bits of code
-
     if (usr.credits < 0) {
     usr.credits = 0;
     }
@@ -306,6 +312,27 @@ void mainMenu() {
             system("clear");
             endgame();
     }
+
+    if (shop.item1Amount < 0) {
+        shop.item1Amount = 0;
+    }
+
+    if (shop.item2Amount < 0) {
+        shop.item2Amount = 0;
+    }
+
+    if (shop.item3Amount < 0) {
+        shop.item3Amount = 0;
+    }
+
+    if (shop.item4Amount < 0) {
+        shop.item4Amount = 0;
+    }
+
+    if (pwrUps.powerUpCommandNum == pwrUps.maxPowerUpCommands && pwrUps.pwrUpActive == true) {
+        pwrUps.pwrUpActive = false;
+        pwrUps.powerUpCommandNum = 0;
+    }    
 
     std::cout << "Credits: $" << usr.credits << "\n";
     std::cout << "Name: " << usr.username << "\n";
@@ -392,27 +419,57 @@ void mainMenu() {
         shopMenu();
     } else if (jobs.currentJobStatus != "Unemployed") {
         if (jobs.currentJobStatus == "Taxi Driver" && input == "drive") {
-            usr.credits += startingJobs.taxiDriver;
+            if (pwrUps.pwrUpActive == true) {
+                usr.credits += startingJobs.taxiDriver * pwrUps.powerUpMultiplier;
+                pwrUps.powerUpCommandNum++;
+            } else {
+                usr.credits += startingJobs.taxiDriver;
+            }
             system("clear");
             mainMenu();
         } else if (jobs.currentJobStatus == "Waiter" && input == "serve") {
-            usr.credits += startingJobs.waiter;
+            if (pwrUps.pwrUpActive == true) {
+                usr.credits += startingJobs.waiter * pwrUps.powerUpMultiplier;
+                pwrUps.powerUpCommandNum++;
+            } else {
+                usr.credits += startingJobs.waiter;
+            }            
             system("clear");
             mainMenu();
         } else if (jobs.currentJobStatus == "Teacher" && input == "teach") {
-            usr.credits += startingJobs.teacher;
+            if (pwrUps.pwrUpActive == true) {
+                usr.credits += startingJobs.teacher * pwrUps.powerUpMultiplier;
+                pwrUps.powerUpCommandNum++;
+            } else {
+                usr.credits += startingJobs.teacher;
+            }               
             system("clear");
             mainMenu();
         } else if (jobs.currentJobStatus == "Programmer" && input == "code") {
-            usr.credits += jobs.programmer;
+            if (pwrUps.pwrUpActive == true) {
+                usr.credits += jobs.programmer * pwrUps.powerUpMultiplier;
+                pwrUps.powerUpCommandNum++;
+            } else {
+                usr.credits += jobs.programmer;
+            }               
             system("clear");
             mainMenu();
         } else if (jobs.currentJobStatus == "Lecturer" && input == "talk") {
-            usr.credits += jobs.lecturer;
+            if (pwrUps.pwrUpActive == true) {
+                usr.credits += jobs.lecturer * pwrUps.powerUpMultiplier;
+                pwrUps.powerUpCommandNum++;
+            } else {
+                usr.credits += jobs.lecturer;
+            }            
             system("clear");
             mainMenu();
         } else if (jobs.currentJobStatus == "Chef" && input == "cook") {
-            usr.credits += jobs.chef;
+            if (pwrUps.pwrUpActive == true) {
+                usr.credits += jobs.chef * pwrUps.powerUpMultiplier;
+                pwrUps.powerUpCommandNum++;
+            } else {
+                usr.credits += jobs.chef;
+            }            
             system("clear");
             mainMenu();
         } else {
@@ -544,13 +601,24 @@ void shopMenu() {
     std::cout << shop.shopItem1 << " - $" << shop.shopItem1Price << "\n";
     std::cout << shop.shopItem2 << " - $" << shop.shopItem2Price << "\n";
     std::cout << shop.shopItem3 << " - $" << shop.shopItem3Price << "\n";
+
+    if (pwrUps.pwrUpActive == false) {
+    std::cout << shop.shopItem4 << " - $" << shop.shopItem4Price << "\n";
+    std::cout << shop.shopItem5 << " - $" << shop.shopItem5Price << "\n\n";
+    } else {
     std::cout << shop.shopItem4 << " - $" << shop.shopItem4Price << "\n\n";
+    }
 
     std::cout << "Commands:\n";
     std::cout << "'quantum' to buy the " << shop.shopItem1 << "\n";
     std::cout << "'house' to buy the " << shop.shopItem2 << "\n";
     std::cout << "'board' to buy the " << shop.shopItem3 << "\n";
     std::cout << "'cat' to buy the " << shop.shopItem4 << "\n";
+
+    if (pwrUps.pwrUpActive == false) {
+        std::cout << "'power' to buy the " << shop.shopItem5 << "\n";
+    }
+
     std::cout << "'exit' to exit the shop\n";
 
     std::cin >> input;
@@ -618,7 +686,6 @@ void shopMenu() {
         }
 
     }  else if (input == "cat") {
-
         if (usr.credits >= shop.shopItem4Price) {
             usr.credits -= shop.shopItem4Price;
             shop.hasItem4 = true;
@@ -636,7 +703,30 @@ void shopMenu() {
             std::cin.ignore();
             InsufficientFunds();
         }
+    } else if (input == "power" && pwrUps.pwrUpActive == false) {
+        if (usr.credits >= shop.shopItem5Price) {
+            usr.credits -= shop.shopItem5Price;
+            pwrUps.pwrUpActive = true;
 
+            system("clear");
+            std::cout << "You now have the " << shop.shopItem5 << "!\n";
+            std::cout << "This multiplies your income by " << pwrUps.powerUpMultiplier << " for " << pwrUps.maxPowerUpCommands << " commands.\n";
+            std::cout << "Press enter to continue.\n";
+            std::cin.ignore();
+            std::cin.get();
+            system("clear");
+            shopMenu();
+
+        } else {
+            system("clear");
+
+            std::cout << "==========================================\n";
+            std::cout << "                   Shop\n";
+            std::cout << "==========================================\n\n";
+
+            std::cin.ignore();
+            InsufficientFunds();            
+        }
     } else if (input == "exit") {
         system("clear");
         mainMenu();
@@ -659,7 +749,7 @@ void InsufficientFunds() {
         mainMenu();
     } else {
         system("clear");
-        uniMenu();
+        InsufficientFunds();
     }
 
 }
