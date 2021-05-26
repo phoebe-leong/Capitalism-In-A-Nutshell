@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <string>
 #include "classes.hpp"
 
 // variable declaration
@@ -42,10 +43,10 @@ void startScreen() {
     init();
 
     system("clear");
-    std::cout << "\n\n  Capitalism In A Nutshell\n";
-    std::cout << "    Made by PH03be\n\n";
+    std::cout << "\n\n  Capitalism In A Nutshell ( CIAN )\n";
+    std::cout << "        Made by PH03be\n\n";
 
-    std::cout << "  Press enter to start\n";
+    std::cout << "     Press enter to start\n";
     std::cin.get();
 
     if (usr.username.empty()) {
@@ -79,8 +80,6 @@ void init() {
     jobs.cookingDegreeFinished = false;
     jobs.talkingDegreeFinished = false;
 
-    jobs.hasUniversityDegree = false;
-
     jobs.programmer = 1000;
     jobs.chef = 200;
     jobs.lecturer = 300;
@@ -90,6 +89,7 @@ void init() {
     startingJobs.taxiDriver = 20;
 
     uni.UniFee = 2000;
+    uni.numOfDegrees = 0;
     uni.course1 = "Computer Science";
     uni.course2 = "Teaching";
     uni.course3 = "Cooking";
@@ -186,10 +186,13 @@ void difficulty() {
 
 int close() {
 
+    std::string creditsStr = std::to_string(usr.credits);
+
     file.open("data.txt");
     file << usr.username << "\n";
     file << jobs.currentJobStatus << "\n";
-    file << difficultyLvl;
+    file << difficultyLvl << "\n";
+    file << creditsStr;
     file.close();
 
     system("clear");
@@ -211,9 +214,9 @@ void uniMenu() {
         if (jobs.csDegreeFinished == false) {
             if (shop.hasItem1 == true) {
                 std::cout << "Computer Science - Requires a previous degree in another field\n";
-            } else if (jobs.hasUniversityDegree == true) {
+            } else if (uni.numOfDegrees >= 1) {
                 std::cout << "Computer Science - Requires 'Quantum Computer'\n";
-            } else if (jobs.hasUniversityDegree == true && shop.hasItem1 == true) {
+            } else if (uni.numOfDegrees >= 1 && shop.hasItem1 == true) {
                 std::cout << "Computer Science - Gives access to 'Programmer' job\n";
             }   
         }
@@ -236,7 +239,7 @@ void uniMenu() {
         std::cout << "Commands\n";
 
         if (jobs.csDegreeFinished == false) {
-            if (jobs.hasUniversityDegree == true && shop.hasItem1 == true) {
+            if (uni.numOfDegrees >= 1 && shop.hasItem1 == true) {
                 std::cout << "'cs' to choose the Computer Science degree\n"; 
             }
         }
@@ -257,9 +260,11 @@ void uniMenu() {
         std::cin >> input;
 
         if (jobs.csDegreeFinished == false) {
-            if (jobs.hasUniversityDegree == true && shop.hasItem1 == true && input == "cs") {
+            if (uni.numOfDegrees >= 1 && shop.hasItem1 == true && input == "cs") {
                 jobs.currentJobStatus = "Programmer";
+                usr.credits -= uni.UniFee;
                 usr.credits += jobs.programmer * 2;
+                uni.numOfDegrees++;
                 system("clear");
                 mainMenu();
             }
@@ -267,21 +272,27 @@ void uniMenu() {
 
         if (jobs.teachingDegreeFinished == false && input == "teaching") {
             jobs.currentJobStatus = "Teacher";
+            usr.credits -= uni.UniFee;
             usr.credits += startingJobs.teacher * 2;
+            uni.numOfDegrees++;
             system("clear");
             mainMenu();
         }
 
         if (jobs.teachingDegreeFinished == true && jobs.talkingDegreeFinished == false && input == "talking") {
             jobs.currentJobStatus = "Lecturer";
+            usr.credits -= uni.UniFee;
             usr.credits += jobs.lecturer * 2;
+            uni.numOfDegrees++;
             system("clear");
             mainMenu();
         }
 
-        if (jobs.cookingDegreeFinished == false) {
+        if (jobs.cookingDegreeFinished == false && input == "cooking") {
             jobs.currentJobStatus = "Chef";
+            usr.credits -= uni.UniFee;
             usr.credits += jobs.chef * 2;
+            uni.numOfDegrees++;
             system("clear");
             mainMenu();
         }
@@ -367,9 +378,9 @@ void mainMenu() {
         }
         if (shop.hasItem4 == true) {
             if (shop.item4Amount > 1) {
-                std::cout << shop.item4Amount << " Cats 'meow'\n";
+                std::cout << shop.item4Amount << " Cats\n";
             } else {
-                std::cout << shop.item4Amount << " Cat 'meow'\n";
+                std::cout << shop.item4Amount << " Cat\n";
             }
         }
 
@@ -378,6 +389,8 @@ void mainMenu() {
 
     std::cout << "Commands:\n";
     std::cout << "'jobs' to go to the job list\n";
+    // Find a way to find the file and display this only if the file exists
+    std::cout << "'erase' to erase all your user data\n";
     std::cout << "'shop' to go to the shop\n";
 
     // work commands
@@ -408,6 +421,29 @@ void mainMenu() {
     if (input == "exit") {
         system("clear");
         close();
+    } else if (input == "erase") {
+        system("clear");
+
+        std::cout << "Are you sure you want to start over? [y/n] \n";
+        char yn;
+        std::cin >> yn;
+
+        if (yn == 'y') {
+            system("clear");
+            system("rm data.txt");
+            system("./main");
+        } else if (yn == 'n') {
+            system("clear");
+            mainMenu();
+        } else {
+            system("clear");
+            std::cout << "Invalid Input.\n Press enter to go back to the main menu.\n";
+            std::cin.ignore();
+            std::cin.get();
+            system("clear");
+            mainMenu();
+        }
+
     } else if (input == "jobs" || input == "job") {
         system("clear");
         jobMenu();
@@ -512,8 +548,55 @@ void jobMenu() {
         // shows the lists of all the current jobs (starter jobs only)
 
         std::cout << "Waiter / Waitress - $" << startingJobs.waiter << "\n";
-        std::cout << "Teacher - Requires University Degree in Teaching - $" << startingJobs.teacher << "\n";
-        std::cout << "Taxi Driver - $" << startingJobs.taxiDriver << "\n\n";
+
+        if (jobs.teachingDegreeFinished == false) {
+            std::cout << "Teacher - Requires University Degree in Teaching - $" << startingJobs.teacher << "\n";
+        }
+
+        // Shows university jobs
+        if (uni.numOfDegrees >= 1) {
+            std::cout << "Taxi Driver - $" << startingJobs.taxiDriver << "\n";
+
+            if (jobs.teachingDegreeFinished == true && jobs.currentJobStatus != "Teacher") {
+                std::cout << "Teacher - $" << startingJobs.teacher;
+
+                if (uni.numOfDegrees > 1) {
+                    std::cout << "\n";
+                } else {
+                    std::cout << "\n\n";
+                }
+
+            }
+
+            if (jobs.talkingDegreeFinished == true && jobs.currentJobStatus != "Lecturer") {
+                std::cout << "Lecturer - $" << jobs.lecturer;
+
+                if (uni.numOfDegrees > 1) {
+                    std::cout << "\n";
+                } else {
+                    std::cout << "\n\n";
+                }
+                
+            }
+
+            if (jobs.cookingDegreeFinished == true && jobs.currentJobStatus != "Chef") {
+                std::cout << "Chef - $" << jobs.chef;
+
+                if (uni.numOfDegrees > 1) {
+                    std::cout << "\n";
+                } else {
+                    std::cout << "\n\n";
+                }
+                
+            }
+
+            if (jobs.csDegreeFinished == true && jobs.currentJobStatus != "Programmer") {
+                std::cout << "Programmer - $" << jobs.programmer;
+            }            
+
+        } else {
+            std::cout << "Taxi Driver - $" << startingJobs.taxiDriver << "\n\n";
+        }
 
         std::cout << "Commands:\n";
         std::cout << "'taxi' to select taxi job\n";
@@ -670,7 +753,7 @@ void shopMenu() {
 
         if (usr.credits >= shop.shopItem3Price) {
             usr.credits -= shop.shopItem3Price;
-            shop.hasItem4 = true;
+            shop.hasItem3 = true;
             shop.item3Amount++;
             system("clear");
             shopMenu();
