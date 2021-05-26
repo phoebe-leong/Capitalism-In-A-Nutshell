@@ -1,4 +1,4 @@
-# Capitalism In A Nutshell
+# Capitalism In A Nutshell ( CIAN )
 
 The aim is simple: buy every item.  
 This can be achieved by getting a job, going to university, getting a better paying job, and then finally managing to buy every item.
