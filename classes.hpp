@@ -31,6 +31,7 @@ class Jobs {
     bool teachingDegreeFinished;
     bool cookingDegreeFinished;
     bool talkingDegreeFinished;
+    bool wizardryDegreeFinished;
 
     // job = {pay per min}
 
@@ -59,6 +60,7 @@ class Jobs {
         std::string course2;
         std::string course3;
         std::string course4;
+        std::string course5;
 
     };
 };
