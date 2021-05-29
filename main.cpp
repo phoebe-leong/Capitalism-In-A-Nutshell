@@ -27,6 +27,7 @@ void mainMenu();
 void jobMenu();
 void uniMenu();
 void shopMenu();
+void powerupsMenu();
 void difficulty();
 void InsufficientFunds();
 void startScreen();
@@ -277,7 +278,7 @@ void uniMenu() {
                 mainMenu();
             }
         }
-
+        
         if (jobs.teachingDegreeFinished == false && input == "teaching") {
             jobs.currentJobStatus = "Teacher";
             usr.credits -= uni.UniFee;
@@ -285,36 +286,35 @@ void uniMenu() {
             uni.numOfDegrees++;
             system("clear");
             mainMenu();
-        }
-
-        if (jobs.teachingDegreeFinished == true && jobs.talkingDegreeFinished == false && input == "talking") {
+        } else if (jobs.teachingDegreeFinished == true && jobs.talkingDegreeFinished == false && input == "talking") {
             jobs.currentJobStatus = "Lecturer";
             usr.credits -= uni.UniFee;
             usr.credits += jobs.lecturer * 2;
             uni.numOfDegrees++;
             system("clear");
             mainMenu();
-        }
-
-        if (jobs.cookingDegreeFinished == false && input == "cooking") {
+        } else if (jobs.cookingDegreeFinished == false && input == "cooking") {
             jobs.currentJobStatus = "Chef";
             usr.credits -= uni.UniFee;
             usr.credits += jobs.chef * 2;
             uni.numOfDegrees++;
             system("clear");
             mainMenu();
-        }
-
-        if (jobs.wizardryDegreeFinished == false && input == "wizard") {
+        } else if (jobs.wizardryDegreeFinished == false && input == "wizard") {
             usr.credits -= uni.UniFee;
             jobs.wizardryDegreeFinished = true;
             system("clear");
             mainMenu();
-        }
-
-        if (input == "exit") {
+        } else if (input == "exit") {
             system("clear");
             mainMenu();
+        } else {
+            system("clear");
+            std::cout << "Not an input.\nPress enter to go back to the uni menu and try again\n";
+            std::cin.ignore();
+            std::cin.get();
+            system("clear");
+            uniMenu();
         }
 
     } else {
@@ -425,6 +425,7 @@ void mainMenu() {
         }    
     }
 
+    std::cout << "'pwr' to go to the powerups menu\n";
     std::cout << "'exit' to exit the program\n";
     std::cout << "'uni' to go to the university menu\n";
 
@@ -470,6 +471,18 @@ void mainMenu() {
         std::cin.ignore();
         system("clear");
         shopMenu();
+    } else if (input == "pwr") {
+        if (pwrUps.pwrUpActive == true) {
+            std::cout << "You already have an active powerup!\n";
+            std::cout << "Press enter to go back to the main menu.\n";
+            std::cin.ignore();
+            std::cin.get();
+            system("clear");
+            mainMenu();
+        } else {
+            system("clear");
+            powerupsMenu();
+        }
     } else if (jobs.currentJobStatus != "Unemployed") {
         if (jobs.currentJobStatus == "Taxi Driver" && input == "drive") {
             std::cin.ignore();
@@ -536,6 +549,10 @@ void mainMenu() {
             mainMenu();
         }
     } else {
+        system("clear");
+        std::cout << "Not an input.\nPress enter to go back to the menu and try again.\n";
+        std::cin.ignore();
+        std::cin.get();
         system("clear");
         mainMenu();
     }
@@ -836,26 +853,84 @@ void shopMenu() {
         mainMenu();
     } else {
         system("clear");
+        std::cout << "Not an input.\nPress enter to go back to the shop menu and try again\n";
+        std::cin.ignore();
+        std::cin.get();
+        system("clear");
+        shopMenu();
+    }
+}
+
+void powerupsMenu() {
+
+    std::cout << "==========================================\n";
+    std::cout << "                 Powerups\n";
+    std::cout << "==========================================\n\n";
+
+    if (jobs.wizardryDegreeFinished == true) {
+
+        std::string input;
+        if (pwrUps.pwrUpActive == false) {
+            std::cout << shop.shopItem5  << " - $" << shop.shopItem5Price << "\n\n";
+
+            std::cout << "Commands:\n";
+            std::cout << "'mult' to buy the " << shop.shopItem5 << "\n";
+            std::cout << "'exit' to exit the powerup shop\n";
+            std::cin >> input;
+
+            if (input == "mult") {
+                if (usr.credits >= shop.shopItem5Price) {
+                    usr.credits -= shop.shopItem5Price;
+                    pwrUps.pwrUpActive = true;
+
+                    system("clear");
+                    std::cout << "You now have the " << shop.shopItem5 << "!\n";
+                    std::cout << "This multiplies your income by " << pwrUps.powerUpMultiplier << " for " << pwrUps.maxPowerUpCommands << " commands.\n";
+                    std::cout << "Press enter to continue.\n";
+                    std::cin.ignore();
+                    std::cin.get();
+                    system("clear");
+                    powerupsMenu();
+                } else {
+                    system("clear");
+                    std::cout << "==========================================\n";
+                    std::cout << "                 Powerups\n";
+                    std::cout << "==========================================\n\n";
+
+                    std::cin.ignore();
+                    InsufficientFunds();    
+                }
+            } else if (input == "exit") {
+                system("clear");
+                mainMenu();
+            } else {
+                system("clear");
+                std::cout << "Not an input.\n Press enter to go back to the powerups menu and try again.\n";
+                std::cin.ignore();
+                std::cin.get();
+                system("clear");
+                powerupsMenu();
+            }
+        }
+    } else {
+        std::cout << "Requires '" << uni.course5 << "' degree.\n";
+        std::cout << "Press enter to go back to the main menu.\n";
+        std::cin.ignore();
+        std::cin.get();
+        system("clear");
         mainMenu();
     }
+
 }
 
 void InsufficientFunds() {
 
-    std::string input;
+    std::cout << "         Insufficient funds\n";
+    std::cout << " Press enter to go back to the main menu\n";
+    std::cin.get();
 
-    std::cout << "          Insufficient funds.\n";
-    std::cout << "   'exit' to go back to the main menu\n";
-    std::cin >> input;
-
-    if (input == "exit") {
-        system("clear");
-        mainMenu();
-    } else {
-        system("clear");
-        InsufficientFunds();
-    }
-
+    system("clear");
+    mainMenu();
 }
 
 int main() {
