@@ -1,4 +1,4 @@
-# cryptor
+# [cryptor](https://github.com/njh0602/cryptor)
 
 use xor encryption/decryption + base64 encode/decode
 
