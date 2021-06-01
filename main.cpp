@@ -5,6 +5,7 @@
 #include <fstream>
 #include <string>
 #include "classes.hpp"
+#include "cryptor/cryptor.hpp"
 
 // variable declaration
 
@@ -12,7 +13,6 @@ std::string difficultyLvl;
 User usr;
 User::PowerUps pwrUps;
 Jobs jobs;
-Jobs::StarterJobs startingJobs;
 Jobs::University uni;
 shopItems shop;
 
@@ -22,6 +22,8 @@ std::ifstream fileRead;
 // function declaration
 void init();
 int close();
+void decrypt();
+void encrypt();
 void usernameSelect();
 void mainMenu();
 void jobMenu();
@@ -33,6 +35,15 @@ void InsufficientFunds();
 void startScreen();
 void endgame();
 
+void encrypt() {
+}
+
+void decrypt() {
+    usr.username = cryptor::decrypt(usr.username);
+    jobs.currentJobStatus = cryptor::decrypt(jobs.currentJobStatus);
+    difficultyLvl = cryptor::decrypt(difficultyLvl);
+}
+
 void startScreen() {
 
     fileRead.open("data.txt");
@@ -41,6 +52,7 @@ void startScreen() {
     getline(fileRead, difficultyLvl);
     fileRead.close();
 
+    decrypt();
     init();
 
     system("clear");
@@ -86,9 +98,9 @@ void init() {
     jobs.chef = 200;
     jobs.lecturer = 300;
 
-    startingJobs.waiter = 25;
-    startingJobs.teacher = 50;
-    startingJobs.taxiDriver = 20;
+    jobs.waiter = 25;
+    jobs.teacher = 50;
+    jobs.taxiDriver = 20;
 
     uni.UniFee = 2000;
     uni.numOfDegrees = 0;
@@ -186,17 +198,13 @@ void difficulty() {
 
 }
 
-// universal close function (of course)
-
 int close() {
-
     file.open("data.txt");
-    file << usr.username << "\n";
-    file << jobs.currentJobStatus << "\n";
-    file << difficultyLvl;
+    file << cryptor::encrypt(usr.username) << "\n";
+    file << cryptor::encrypt(jobs.currentJobStatus) << "\n";
+    file << cryptor::encrypt(difficultyLvl);
     file.close();
 
-    system("clear");
     return 0;
 }
 
@@ -282,7 +290,7 @@ void uniMenu() {
         if (jobs.teachingDegreeFinished == false && input == "teaching") {
             jobs.currentJobStatus = "Teacher";
             usr.credits -= uni.UniFee;
-            usr.credits += startingJobs.teacher * 2;
+            usr.credits += jobs.teacher * 2;
             uni.numOfDegrees++;
             system("clear");
             mainMenu();
@@ -486,37 +494,37 @@ void mainMenu() {
     } else if (jobs.currentJobStatus != "Unemployed") {
         if (jobs.currentJobStatus == "Taxi Driver" && input == "drive") {
             std::cin.ignore();
-            if (pwrUps.pwrUpActive == true) {
-                usr.credits += startingJobs.taxiDriver * pwrUps.powerUpMultiplier;
+            if (pwrUps.incomePwrUpActive == true) {
+                usr.credits += jobs.taxiDriver * pwrUps.powerUpMultiplier;
                 pwrUps.powerUpCommandNum++;
             } else {
-                usr.credits += startingJobs.taxiDriver;
+                usr.credits += jobs.taxiDriver;
             }
             system("clear");
             mainMenu();
         } else if (jobs.currentJobStatus == "Waiter" && input == "serve") {
             std::cin.ignore();
-            if (pwrUps.pwrUpActive == true) {
-                usr.credits += startingJobs.waiter * pwrUps.powerUpMultiplier;
+            if (pwrUps.incomePwrUpActive == true) {
+                usr.credits += jobs.waiter * pwrUps.powerUpMultiplier;
                 pwrUps.powerUpCommandNum++;
             } else {
-                usr.credits += startingJobs.waiter;
+                usr.credits += jobs.waiter;
             }            
             system("clear");
             mainMenu();
         } else if (jobs.currentJobStatus == "Teacher" && input == "teach") {
             std::cin.ignore();
-            if (pwrUps.pwrUpActive == true) {
-                usr.credits += startingJobs.teacher * pwrUps.powerUpMultiplier;
+            if (pwrUps.incomePwrUpActive == true) {
+                usr.credits += jobs.teacher * pwrUps.powerUpMultiplier;
                 pwrUps.powerUpCommandNum++;
             } else {
-                usr.credits += startingJobs.teacher;
+                usr.credits += jobs.teacher;
             }               
             system("clear");
             mainMenu();
         } else if (jobs.currentJobStatus == "Programmer" && input == "code") {
             std::cin.ignore();
-            if (pwrUps.pwrUpActive == true) {
+            if (pwrUps.incomePwrUpActive == true) {
                 usr.credits += jobs.programmer * pwrUps.powerUpMultiplier;
                 pwrUps.powerUpCommandNum++;
             } else {
@@ -526,7 +534,7 @@ void mainMenu() {
             mainMenu();
         } else if (jobs.currentJobStatus == "Lecturer" && input == "talk") {
             std::cin.ignore();
-            if (pwrUps.pwrUpActive == true) {
+            if (pwrUps.incomePwrUpActive == true) {
                 usr.credits += jobs.lecturer * pwrUps.powerUpMultiplier;
                 pwrUps.powerUpCommandNum++;
             } else {
@@ -536,7 +544,7 @@ void mainMenu() {
             mainMenu();
         } else if (jobs.currentJobStatus == "Chef" && input == "cook") {
             std::cin.ignore();
-            if (pwrUps.pwrUpActive == true) {
+            if (pwrUps.incomePwrUpActive == true) {
                 usr.credits += jobs.chef * pwrUps.powerUpMultiplier;
                 pwrUps.powerUpCommandNum++;
             } else {
@@ -587,14 +595,14 @@ void jobMenu() {
 
         // shows the lists of all the current jobs (starter jobs only)
 
-        std::cout << "Waiter / Waitress - $" << startingJobs.waiter << "\n";
+        std::cout << "Waiter / Waitress - $" << jobs.waiter << "\n";
 
         // Shows university jobs
         if (uni.numOfDegrees >= 1) {
-            std::cout << "Taxi Driver - $" << startingJobs.taxiDriver << "\n";
+            std::cout << "Taxi Driver - $" << jobs.taxiDriver << "\n";
 
             if (jobs.teachingDegreeFinished == true && jobs.currentJobStatus != "Teacher") {
-                std::cout << "Teacher - $" << startingJobs.teacher;
+                std::cout << "Teacher - $" << jobs.teacher;
 
                 if (uni.numOfDegrees > 1) {
                     std::cout << "\n";
@@ -631,7 +639,7 @@ void jobMenu() {
             }            
 
         } else {
-            std::cout << "Taxi Driver - $" << startingJobs.taxiDriver;
+            std::cout << "Taxi Driver - $" << jobs.taxiDriver;
         }
 
         std::cout << "\n\nMore jobs can be found in the university menu.\n\n";
@@ -651,14 +659,19 @@ void jobMenu() {
 
         } else if (input == "taxi") {
             jobs.currentJobStatus = "Taxi Driver";
-            usr.credits += startingJobs.taxiDriver * 2;
+            usr.credits += jobs.taxiDriver * 2;
             mainMenu(); 
         } else if (input == "waiter") {
             jobs.currentJobStatus = "Waiter";
-            usr.credits += startingJobs.waiter * 2;
+            usr.credits += jobs.waiter * 2;
             mainMenu();
         } else if (input == "uni") {
-            uniMenu();
+            if (usr.credits < uni.UniFee) {
+                std::cin.ignore();
+                uniMenu();
+            } else {
+                uniMenu();
+            }
         } else {
             jobMenu();
         }
@@ -670,9 +683,9 @@ void jobMenu() {
 
         // shows the lists of all the current jobs
 
-        std::cout << "Waiter / Waitress - $" << startingJobs.waiter << "\n";
-        std::cout << "Teacher - $" << startingJobs.teacher << "\n";
-        std::cout << "Taxi Driver - $" << startingJobs.taxiDriver << "\n\n";
+        std::cout << "Waiter / Waitress - $" << jobs.waiter << "\n";
+        std::cout << "Teacher - $" << jobs.teacher << "\n";
+        std::cout << "Taxi Driver - $" << jobs.taxiDriver << "\n\n";
 
         std::cout << "Commands:\n";
         std::cout << "'taxi' to select taxi job\n";
@@ -687,11 +700,11 @@ void jobMenu() {
             mainMenu();
         } else if (input == "taxi") {
             jobs.currentJobStatus = "Taxi Driver";
-            usr.credits += startingJobs.taxiDriver;
+            usr.credits += jobs.taxiDriver;
             mainMenu(); 
         } else if (input == "waiter") {
             jobs.currentJobStatus = "Waiter";
-            usr.credits += startingJobs.waiter;
+            usr.credits += jobs.waiter;
             mainMenu();
         } else if (input == "uni") {
             uniMenu();
