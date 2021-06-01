@@ -16,7 +16,8 @@ class User {
         int powerUpCommandNum;
         int maxPowerUpCommands;
 
-        bool pwrUpActive;
+        bool pwrUpActive; // If there is an already active powerup
+        bool incomePwrUpActive; // If the Income Multiplier Powerup is active
     };
 };
 
@@ -38,16 +39,10 @@ class Jobs {
     int programmer; // requires university degree in computer science
     int chef; // requires university degree in cooking
     int lecturer; // requires university degree in talking 
-
-    class StarterJobs {
-        public:
         
         int waiter;
         int teacher; // requires university degree in teaching
         int taxiDriver; 
-    };
-
-    // wait for degree to finish = {2 mins}
 
     class University {
         public:
