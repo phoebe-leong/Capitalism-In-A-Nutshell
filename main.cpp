@@ -79,56 +79,6 @@ void endgame() {
 }
 
 void init() {
-
-    usr.starterCredits = 900;
-
-    pwrUps.powerUpCommandNum = 0;
-    pwrUps.maxPowerUpCommands = 10;
-    pwrUps.powerUpMultiplier = 200;
-
-    pwrUps.pwrUpActive = false;
-
-    jobs.csDegreeFinished = false;
-    jobs.teachingDegreeFinished = false;
-    jobs.cookingDegreeFinished = false;
-    jobs.talkingDegreeFinished = false;
-    jobs.wizardryDegreeFinished = false;
-
-    jobs.programmer = 1000;
-    jobs.chef = 200;
-    jobs.lecturer = 300;
-
-    jobs.waiter = 25;
-    jobs.teacher = 50;
-    jobs.taxiDriver = 20;
-
-    uni.UniFee = 2000;
-    uni.numOfDegrees = 0;
-    uni.course1 = "Computer Science";
-    uni.course2 = "Teaching";
-    uni.course3 = "Cooking";
-    uni.course4 = "Talking";
-    uni.course5 = "Wizardry";
-
-    shop.shopItem1 = "Quantum Computer";
-    shop.shopItem2 = "Big house";
-    shop.shopItem3 = "Hoverboard";
-    shop.shopItem4 = "Cat";
-    shop.shopItem5 = "Pay Multiplier Power Up";
-
-    shop.shopItem1Price = 100000;
-    shop.shopItem2Price = 1000;
-    shop.shopItem3Price = 9000;
-    shop.shopItem4Price = 50;
-    shop.shopItem5Price = shop.shopItem2Price * 2;
-
-    shop.hasItem1 = false;
-    shop.hasItem2 = false;
-    shop.hasItem3 = false;
-    shop.hasItem4 = false;
-
-    shop.hasAnItem = false;
-
     if (jobs.currentJobStatus.empty()) {
         jobs.currentJobStatus = "Unemployed";
     }   
