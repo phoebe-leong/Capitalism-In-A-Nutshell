@@ -23,7 +23,6 @@ std::ifstream fileRead;
 void init();
 int close();
 void decrypt();
-void encrypt();
 void usernameSelect();
 void mainMenu();
 void jobMenu();
@@ -35,13 +34,11 @@ void InsufficientFunds();
 void startScreen();
 void endgame();
 
-void encrypt() {
-}
-
 void decrypt() {
     usr.username = cryptor::decrypt(usr.username);
     jobs.currentJobStatus = cryptor::decrypt(jobs.currentJobStatus);
     difficultyLvl = cryptor::decrypt(difficultyLvl);
+    usr.creditstr = cryptor::decrypt(usr.creditstr);
 }
 
 void startScreen() {
@@ -50,6 +47,7 @@ void startScreen() {
     getline(fileRead, usr.username);
     getline(fileRead, jobs.currentJobStatus);
     getline(fileRead, difficultyLvl);
+    getline(fileRead, usr.creditstr);
     fileRead.close();
 
     decrypt();
@@ -84,7 +82,11 @@ void init() {
     }   
 
     if (difficultyLvl == "Easy" || difficultyLvl == "easy") {
-        usr.credits = usr.starterCredits * 2;
+        if (!(usr.creditstr.empty())) {
+            usr.credits = stoi(usr.creditstr);
+        } else {
+            usr.credits *= 2;
+        }
         pwrUps.maxPowerUpCommands *= 2;
         pwrUps.powerUpMultiplier *=  2;
 
@@ -95,9 +97,16 @@ void init() {
 
         uni.UniFee -= 100;
     } else if (difficultyLvl == "Normal" || difficultyLvl == "normal") {
-        usr.credits = usr.starterCredits;
+        if (!(usr.creditstr.empty())) {
+            usr.credits = stoi(usr.creditstr);
+        }
     } else if (difficultyLvl == "Impossible" || difficultyLvl == "impossible") {
-        usr.credits = 0;
+        if (!(usr.creditstr.empty())) {
+            usr.credits = stoi(usr.creditstr);
+        } else {
+            usr.credits = 0;
+        }
+
         shop.item1Amount *= 100;
         shop.item2Amount *= 50;
         shop.item3Amount *= 50;
@@ -108,8 +117,6 @@ void init() {
         pwrUps.maxPowerUpCommands /= 2;
 
         uni.UniFee *= 100;
-    } else if (difficultyLvl.empty()) {
-        usr.credits = usr.starterCredits;
     }
 }
 
@@ -152,7 +159,8 @@ int close() {
     file.open("data.txt");
     file << cryptor::encrypt(usr.username) << "\n";
     file << cryptor::encrypt(jobs.currentJobStatus) << "\n";
-    file << cryptor::encrypt(difficultyLvl);
+    file << cryptor::encrypt(difficultyLvl) << "\n";
+    file << cryptor::encrypt(std::to_string(usr.credits));
     file.close();
 
     return 0;
