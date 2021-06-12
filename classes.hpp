@@ -5,6 +5,9 @@ class User {
 
     int starterCredits = 900;
     int credits = starterCredits;
+
+    std::string creditstr;
+
     std::string username;
 
     class PowerUps {
