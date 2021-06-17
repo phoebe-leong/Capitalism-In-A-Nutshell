@@ -40,7 +40,9 @@ void startScreen() {
     usr.username = cryptor::decrypt(usr.username);
     jobs.currentJobStatus = cryptor::decrypt(jobs.currentJobStatus);
     usr.difficultyLvl = cryptor::decrypt(usr.difficultyLvl);
-    usr.creditstr = cryptor::decrypt(usr.creditstr);
+    if (!usr.creditstr.empty()) {
+        usr.credits = std::stoi(cryptor::decrypt(usr.creditstr));
+    }
 
     init();
 
@@ -76,8 +78,6 @@ void init() {
     if (usr.difficultyLvl == "Easy" || usr.difficultyLvl == "easy") {
         if (usr.creditstr.empty()) {
             usr.credits *= 2;
-        } else {
-            usr.credits = std::stoi(usr.creditstr);
         }
         pwrWait.maxCommands *= 2;
         pwrUps.incomeMultiplier *=  2;
@@ -91,14 +91,10 @@ void init() {
     } else if (usr.difficultyLvl == "Normal" || usr.difficultyLvl == "normal") {
         if (usr.creditstr.empty()) {
             usr.credits = usr.starterCredits;
-        } else {
-            usr.credits = std::stoi(usr.creditstr);
         }
     } else if (usr.difficultyLvl == "Impossible" || usr.difficultyLvl == "impossible") {
         if (usr.creditstr.empty()) {
             usr.credits = 0;
-        } else {
-            usr.credits = std::stoi(usr.creditstr);
         }
 
         shop.item1Amount *= 100;
