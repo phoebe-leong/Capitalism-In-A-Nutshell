@@ -1,8 +1,7 @@
 #include <string>
 #pragma once
 
-class User {
-    public:
+struct User {
 
     int starterCredits = 900;
     int credits = starterCredits;
@@ -12,8 +11,7 @@ class User {
     std::string difficultyLvl;
 };
 
-class Jobs {
-    public:
+struct Jobs {
 
     std::string currentJobStatus;
 
@@ -31,11 +29,10 @@ class Jobs {
     int chef = 200; // requires university degree in cooking
     int lecturer = 300; // requires university degree in talking 
         
-        int waiter = 25;
-        int teacher = 50; // requires university degree in teaching
+    int waiter = 25;
+    int teacher = 50; // requires university degree in teaching
 
-    class University {
-        public:
+    struct University {
 
         int UniFee = 2000;
 
@@ -50,8 +47,7 @@ class Jobs {
     };
 };
 
-class shopItems {
-    public:
+struct shopItems {
 
     std::string shopItem1 = "Quantum Computer";
     std::string shopItem2 = "Teaching";
@@ -77,4 +73,3 @@ class shopItems {
     bool hasAnItem = false;
 
 };
-
