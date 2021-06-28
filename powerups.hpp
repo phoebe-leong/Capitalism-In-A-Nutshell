@@ -15,4 +15,8 @@ struct Powerups {
         int incomeMultiplier = 200;
         bool incomePowerupActive = false;
         std::string powerup1 = "Income Multiplier Powerup";
+
+        int payrise = 250;
+        std::string powerup2 = "Payrise Powerup";
+        bool payrisePowerupActive = false;
 };
