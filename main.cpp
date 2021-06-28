@@ -1,12 +1,13 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sys/stat.h>
+
 #include "classes.hpp"
 #include "powerups.hpp"
 #include "cryptor/cryptor.hpp"
 
-// variable declaration
-
+// Variables
 User usr;
 Powerups pwrUps;
 Powerups::Wait pwrWait;
@@ -30,12 +31,41 @@ void endgame();
 void startScreen() {
     std::ifstream fileRead;
 
-    fileRead.open("data.txt");
+    std::string wizardryDegreeFinishedStr;
+    std::string incomePowerupActiveStr;
+    std::string payrisePowerUpActive;
+
+    fileRead.open("CIAN/data.txt");
     getline(fileRead, usr.username);
     getline(fileRead, jobs.currentJobStatus);
     getline(fileRead, usr.difficultyLvl);
     getline(fileRead, usr.creditstr);
     fileRead.close();
+
+    fileRead.open("CIAN/powerups.txt");
+    getline(fileRead, wizardryDegreeFinishedStr);
+    getline(fileRead, incomePowerupActiveStr);
+    getline(fileRead, payrisePowerUpActive);
+
+    fileRead.close();
+
+    if (cryptor::decrypt(wizardryDegreeFinishedStr) == "1") {
+        jobs.wizardryDegreeFinished = true;
+    }
+
+    if (cryptor::decrypt(incomePowerupActiveStr) == "1") {
+        pwrUps.incomePowerupActive = true;
+    }
+
+    if (cryptor::decrypt(payrisePowerUpActive) == "1") {
+        pwrUps.payrisePowerupActive = true;
+
+        jobs.chef += pwrUps.payrise;
+        jobs.lecturer += pwrUps.payrise;
+        jobs.programmer += pwrUps.payrise;
+        jobs.teacher += pwrUps.payrise;
+        jobs.waiter += pwrUps.payrise;
+    }
 
     usr.username = cryptor::decrypt(usr.username);
     jobs.currentJobStatus = cryptor::decrypt(jobs.currentJobStatus);
@@ -43,6 +73,7 @@ void startScreen() {
     if (!usr.creditstr.empty()) {
         usr.credits = std::stoi(cryptor::decrypt(usr.creditstr));
     }
+
 
     init();
 
@@ -71,16 +102,21 @@ void endgame() {
 
 void init() {
 
+    if (islower(usr.difficultyLvl[0])) {
+        usr.difficultyLvl[0] = toupper(usr.difficultyLvl[0]);
+    }
+
     if (jobs.currentJobStatus.empty()) {
         jobs.currentJobStatus = "Unemployed";
     }   
 
-    if (usr.difficultyLvl == "Easy" || usr.difficultyLvl == "easy") {
+    if (usr.difficultyLvl == "Easy") {
         if (usr.creditstr.empty()) {
             usr.credits *= 2;
         }
         pwrWait.maxCommands *= 2;
         pwrUps.incomeMultiplier *=  2;
+        pwrUps.cost -= 500;
 
         shop.item1Amount -= 100;
         shop.item2Amount -= 50;
@@ -88,11 +124,11 @@ void init() {
         shop.item4Amount -= 50;
 
         uni.UniFee -= 100;
-    } else if (usr.difficultyLvl == "Normal" || usr.difficultyLvl == "normal") {
+    } else if (usr.difficultyLvl == "Normal") {
         if (usr.creditstr.empty()) {
             usr.credits = usr.starterCredits;
         }
-    } else if (usr.difficultyLvl == "Impossible" || usr.difficultyLvl == "impossible") {
+    } else if (usr.difficultyLvl == "Impossible") {
         if (usr.creditstr.empty()) {
             usr.credits = 0;
         }
@@ -103,7 +139,7 @@ void init() {
         shop.item4Amount *= 50;
 
         pwrUps.incomeMultiplier /= 20;
-
+        pwrUps.cost *= 100;
         pwrWait.maxCommands /= 2;
 
         uni.UniFee *= 100;
@@ -114,23 +150,7 @@ void difficulty() {
     std::cout << "Choose a difficulty: Easy, Normal, Impossible\n";
     std::cin >> usr.difficultyLvl;
 
-    // pretty dumb way of doing it but other ways don't work
-    if (usr.difficultyLvl == "Easy") {
-        init();
-        mainMenu();
-    } else if (usr.difficultyLvl == "easy") {
-        init();
-        mainMenu();
-    } else if (usr.difficultyLvl == "Normal") {
-        init();
-        mainMenu();
-    } else if (usr.difficultyLvl == "normal") {
-        init();
-        mainMenu();
-    } else if (usr.difficultyLvl == "Impossible") {
-        init();
-        mainMenu();
-    } else if (usr.difficultyLvl == "impossible") {
+    if (usr.difficultyLvl == "Easy" || usr.difficultyLvl == "easy" || usr.difficultyLvl == "Normal" || usr.difficultyLvl == "normal" || usr.difficultyLvl == "Impossible" || usr.difficultyLvl == "impossible")  {
         init();
         mainMenu();
     } else {
@@ -219,6 +239,15 @@ void uniMenu() {
                 usr.credits += jobs.programmer * 2;
                 uni.numOfDegrees++;
                 system("clear");
+
+                std::ofstream file;
+                file.open("CIAN/data.txt");
+                file << cryptor::encrypt(usr.username) << std::endl;
+                file << cryptor::encrypt(jobs.currentJobStatus) << std::endl;
+                file << cryptor::encrypt(usr.difficultyLvl) << std::endl;
+                file << cryptor::encrypt(std::to_string(usr.credits));
+                file.close(); 
+
                 mainMenu();
             }
         }
@@ -229,12 +258,30 @@ void uniMenu() {
             usr.credits += jobs.teacher * 2;
             uni.numOfDegrees++;
             system("clear");
+
+            std::ofstream file;
+            file.open("CIAN/data.txt");
+            file << cryptor::encrypt(usr.username) << std::endl;
+            file << cryptor::encrypt(jobs.currentJobStatus) << std::endl;
+            file << cryptor::encrypt(usr.difficultyLvl) << std::endl;
+            file << cryptor::encrypt(std::to_string(usr.credits));
+            file.close(); 
+
             mainMenu();
         } else if (jobs.teachingDegreeFinished && !jobs.talkingDegreeFinished && input == "talking") {
             jobs.currentJobStatus = "Lecturer";
             usr.credits -= uni.UniFee;
             usr.credits += jobs.lecturer * 2;
             uni.numOfDegrees++;
+
+            std::ofstream file;
+            file.open("data.txt");
+            file << cryptor::encrypt(usr.username) << std::endl;
+            file << cryptor::encrypt(jobs.currentJobStatus) << std::endl;
+            file << cryptor::encrypt(usr.difficultyLvl) << std::endl;
+            file << cryptor::encrypt(std::to_string(usr.credits));
+            file.close(); 
+
             system("clear");
             mainMenu();
         } else if (!jobs.cookingDegreeFinished && input == "cooking") {
@@ -243,10 +290,26 @@ void uniMenu() {
             usr.credits += jobs.chef * 2;
             uni.numOfDegrees++;
             system("clear");
+
+            std::ofstream file;
+            file.open("CIAN/data.txt");
+            file << cryptor::encrypt(usr.username) << std::endl;
+            file << cryptor::encrypt(jobs.currentJobStatus) << std::endl;
+            file << cryptor::encrypt(usr.difficultyLvl) << std::endl;
+            file << cryptor::encrypt(std::to_string(usr.credits));
+            file.close(); 
+
             mainMenu();
         } else if (!jobs.wizardryDegreeFinished && input == "wizard") {
             usr.credits -= uni.UniFee;
             jobs.wizardryDegreeFinished = true;
+
+            std::ofstream file;
+            file.open("CIAN/powerups.txt");
+            file << cryptor::encrypt(std::to_string(jobs.wizardryDegreeFinished)) << std::endl;
+            file << cryptor::encrypt(std::to_string(pwrUps.incomePowerupActive));
+            file.close();
+
             system("clear");
             mainMenu();
         } else if (input == "exit") {
@@ -302,17 +365,29 @@ int mainMenu() {
     if (pwrWait.commands == pwrWait.maxCommands && pwrUps.active) {
         pwrUps.active = false;
         pwrWait.commands = 0;
-    }    
+    }
+
+    std::ifstream fileRead("CIAN/data.txt");
+    std::string line;
+    getline(fileRead, line);
+    fileRead.close();
+
+    if (line.empty()) {
+        std::ofstream file("CIAN/data.txt");
+
+        file << cryptor::encrypt(usr.username) << std::endl;
+        file << cryptor::encrypt(jobs.currentJobStatus) << std::endl;
+        file << cryptor::encrypt(std::to_string(usr.credits)) << std::endl;
+        file.close();
+    }
+
+    const std::string version = "7.0";
 
     std::cout << "Credits: $" << usr.credits << "\n";
     std::cout << "Name: " << usr.username << "\n";
     std::cout << "Job: " << jobs.currentJobStatus << "\n";
-
-    if (islower(usr.difficultyLvl[0])) {
-        usr.difficultyLvl[0] = toupper(usr.difficultyLvl[0]);
-    }
-
-    std::cout << "Difficulty: " << usr.difficultyLvl << "\n\n";
+    std::cout << "Difficulty: " << usr.difficultyLvl << "\n";
+    std::cout << "Version: " << version << "\n\n";
 
     // shows the players items (only shows the items list if they have any items)
 
@@ -353,45 +428,37 @@ int mainMenu() {
     }
 
     std::cout << "Commands:\n";
-    std::cout << "'jobs' to go to the job list\n";
-    std::cout << "'erase' to erase all your user data\n";
+    std::cout << "'jobs' to go to the job menu\n";
     std::cout << "'shop' to go to the shop\n";
+    std::cout << "'pwr' to go to the powerups menu\n";
+    std::cout << "'uni' to go to the university menu\n";
 
     // work commands
 
     if (jobs.currentJobStatus != "Unemployed") {
-        if (jobs.currentJobStatus == "Taxi Driver") {
-            std::cout << "'drive' to work\n";
-        } else if (jobs.currentJobStatus == "Waiter") {
-            std::cout << "'serve' to work\n";
+        if (jobs.currentJobStatus == "Waiter") {
+            std::cout << "'serve' to work\n\n";
         } else if (jobs.currentJobStatus == "Teacher") {
-            std::cout << "'teach' to work\n";
+            std::cout << "'teach' to work\n\n";
         } else if (jobs.currentJobStatus == "Programmer") {
-            std::cout << "'code' to work\n";
+            std::cout << "'code' to work\n\n";
         } else if (jobs.currentJobStatus == "Chef") {
-            std::cout << "'cook' to work\n";
-        } else if (jobs.currentJobStatus == "Lecturer") {
-            std::cout << "'talk' to work\n";
+            std::cout << "'cook' to work\n\n";
+        } else {
+            std::cout << "'talk' to work\n\n";
         }    
     }
 
-    std::cout << "'pwr' to go to the powerups menu\n";
+    std::cout << "'dif' to change your difficulty level\n";
+    std::cout << "'erase' to erase your user data\n";
+    std::cout << "'redirect' to toggle release redirect on startup\n";
     std::cout << "'exit' to exit the program\n";
-    std::cout << "'uni' to go to the university menu\n";
 
     std::string input;
     std::cin >> input;
 
     if (input == "exit") {
-        std::ofstream file;
-        file.open("data.txt");
         system("clear");
-        file << cryptor::encrypt(usr.username) << std::endl;
-        file << cryptor::encrypt(jobs.currentJobStatus) << std::endl;
-        file << cryptor::encrypt(usr.difficultyLvl) << std::endl;
-        file << cryptor::encrypt(std::to_string(usr.credits));
-        file.close();
-
         return 0;
     } else if (input == "erase") {
         std::cin.ignore();
@@ -403,7 +470,7 @@ int mainMenu() {
 
         if (yn == 'y') {
             system("clear");
-            system("rm data.txt");
+            system("rmdir CIAN");
             system("./main");
         } else if (yn == 'n') {
             system("clear");
@@ -417,6 +484,35 @@ int mainMenu() {
             mainMenu();
         }
 
+    }  else if (input == "redirect") {
+
+        std::ifstream fileRead("CIAN/redirect.txt");
+        std::string redirecttoggle;
+        getline(fileRead, redirecttoggle);
+
+        if (redirecttoggle == "redirecttoggle") {
+            system("rm CIAN/redirect.txt");
+            std::cout << "'Release redirect on startup' is now toggled on.\n";
+            std::cout << "Press enter to go back to the main menu.\n";
+            std::cin.ignore();
+            std::cin.get();
+            system("clear");
+            mainMenu();
+        } else {
+            std::ofstream file("CIAN/redirect.txt");
+            file << "redirecttoggle";
+            file.close();
+            system("clear");
+            std::cout << "'Release redirect on startup' is now toggled off.\n";
+            std::cout << "Press enter to go back to the main menu.\n";
+            std::cin.ignore();
+            std::cin.get();
+            system("clear");
+            mainMenu();
+        }
+    } else if (input == "dif") {
+        system("clear");
+        difficulty();
     } else if (input == "jobs" || input == "job") {
         std::cin.ignore();
         system("clear");
@@ -449,7 +545,16 @@ int mainMenu() {
                 pwrWait.commands++;
             } else {
                 usr.credits += jobs.waiter;
-            }            
+            }
+
+            std::ofstream file;
+            file.open("CIAN/data.txt");
+            file << cryptor::encrypt(usr.username) << std::endl;
+            file << cryptor::encrypt(jobs.currentJobStatus) << std::endl;
+            file << cryptor::encrypt(usr.difficultyLvl) << std::endl;
+            file << cryptor::encrypt(std::to_string(usr.credits));
+            file.close();  
+
             system("clear");
             mainMenu();
         } else if (jobs.currentJobStatus == "Teacher" && input == "teach") {
@@ -459,7 +564,16 @@ int mainMenu() {
                 pwrWait.commands++;
             } else {
                 usr.credits += jobs.teacher;
-            }               
+            }
+
+            std::ofstream file;
+            file.open("CIAN/data.txt");
+            file << cryptor::encrypt(usr.username) << std::endl;
+            file << cryptor::encrypt(jobs.currentJobStatus) << std::endl;
+            file << cryptor::encrypt(usr.difficultyLvl) << std::endl;
+            file << cryptor::encrypt(std::to_string(usr.credits));
+            file.close(); 
+
             system("clear");
             mainMenu();
         } else if (jobs.currentJobStatus == "Programmer" && input == "code") {
@@ -469,7 +583,16 @@ int mainMenu() {
                 pwrWait.commands++;
             } else {
                 usr.credits += jobs.programmer;
-            }               
+            }
+
+            std::ofstream file;
+            file.open("CIAN/data.txt");
+            file << cryptor::encrypt(usr.username) << std::endl;
+            file << cryptor::encrypt(jobs.currentJobStatus) << std::endl;
+            file << cryptor::encrypt(usr.difficultyLvl) << std::endl;
+            file << cryptor::encrypt(std::to_string(usr.credits));
+            file.close(); 
+
             system("clear");
             mainMenu();
         } else if (jobs.currentJobStatus == "Lecturer" && input == "talk") {
@@ -480,6 +603,15 @@ int mainMenu() {
             } else {
                 usr.credits += jobs.lecturer;
             }            
+
+            std::ofstream file;
+            file.open("CIAN/data.txt");
+            file << cryptor::encrypt(usr.username) << std::endl;
+            file << cryptor::encrypt(jobs.currentJobStatus) << std::endl;
+            file << cryptor::encrypt(usr.difficultyLvl) << std::endl;
+            file << cryptor::encrypt(std::to_string(usr.credits));
+            file.close(); 
+
             system("clear");
             mainMenu();
         } else if (jobs.currentJobStatus == "Chef" && input == "cook") {
@@ -490,6 +622,15 @@ int mainMenu() {
             } else {
                 usr.credits += jobs.chef;
             }            
+
+            std::ofstream file;
+            file.open("CIAN/data.txt");
+            file << cryptor::encrypt(usr.username) << std::endl;
+            file << cryptor::encrypt(jobs.currentJobStatus) << std::endl;
+            file << cryptor::encrypt(usr.difficultyLvl) << std::endl;
+            file << cryptor::encrypt(std::to_string(usr.credits));
+            file.close(); 
+
             system("clear");
             mainMenu();
         } else {
@@ -535,9 +676,9 @@ void jobMenu() {
         std::cout << "          Available Jobs\n";
         std::cout << "==========================================\n\n";   
 
-        // shows the lists of all the current jobs (starter jobs only)
-
-        std::cout << "Waiter / Waitress - $" << jobs.waiter << "\n";
+        if (jobs.currentJobStatus != "Waiter") {
+            std::cout << "Waiter / Waitress - $" << jobs.waiter << "\n";
+        }
 
         // Shows university jobs
         if (uni.numOfDegrees >= 1) {
@@ -583,7 +724,9 @@ void jobMenu() {
         std::cout << "\n\nMore jobs can be found in the university menu.\n\n";
 
         std::cout << "Commands:\n";
-        std::cout << "'waiter' to select waiter / waitress job\n";
+        if (jobs.currentJobStatus != "Waiter") {
+            std::cout << "'waiter' to select waiter / waitress job\n";
+        }
         std::cout << "'exit' to exit the job menu\n";
         std::cout << "'uni' to go to the university menu\n";
         std::cin >> input;
@@ -592,9 +735,18 @@ void jobMenu() {
 
         if (input == "exit") {
             mainMenu(); 
-        } else if (input == "waiter") {
+        } else if (input == "waiter" && jobs.currentJobStatus != "Waiter") {
             jobs.currentJobStatus = "Waiter";
             usr.credits += jobs.waiter * 2;
+
+            std::ofstream file;
+            file.open("CIAN/data.txt");
+            file << cryptor::encrypt(usr.username) << std::endl;
+            file << cryptor::encrypt(jobs.currentJobStatus) << std::endl;
+            file << cryptor::encrypt(usr.difficultyLvl) << std::endl;
+            file << cryptor::encrypt(std::to_string(usr.credits));
+            file.close(); 
+
             mainMenu();
         } else if (input == "uni") {
             if (usr.credits < uni.UniFee) {
@@ -618,7 +770,6 @@ void jobMenu() {
         std::cout << "Teacher - $" << jobs.teacher << "\n";
 
         std::cout << "Commands:\n";
-        std::cout << "'taxi' to select taxi job\n";
         std::cout << "'waiter' to select waiter / waitress job\n";
         std::cout << "'exit' to exit the job menu\n";
         std::cout << "'uni' to go to the university menu\n";
@@ -631,6 +782,15 @@ void jobMenu() {
         } else if (input == "waiter") {
             jobs.currentJobStatus = "Waiter";
             usr.credits += jobs.waiter;
+
+            std::ofstream file;
+            file.open("CIAN/data.txt");
+            file << cryptor::encrypt(usr.username) << std::endl;
+            file << cryptor::encrypt(jobs.currentJobStatus) << std::endl;
+            file << cryptor::encrypt(usr.difficultyLvl) << std::endl;
+            file << cryptor::encrypt(std::to_string(usr.credits));
+            file.close(); 
+
             mainMenu();
         } else if (input == "uni") {
             uniMenu();
@@ -812,15 +972,24 @@ void powerupsMenu() {
         if (pwrUps.active == false) {
             std::cout << "Credits: $" << usr.credits << "\n\n";
 
+            std::cout << pwrUps.powerup1 << " - $" << pwrUps.cost << "\n";
+            std::cout << pwrUps.powerup2 << " - $" << pwrUps.cost << "\n\n";
+
             std::cout << "Commands:\n";
-            std::cout << "'mult' to buy the " << pwrUps.powerup1 << "\n";
+            if (!pwrUps.incomePowerupActive) {
+                std::cout << "'mult' to buy the " << pwrUps.powerup1 << "\n";
+            }
+            if (!pwrUps.payrisePowerupActive) {
+                std::cout << "'pay' to buy the " << pwrUps.powerup1 << "\n";
+            }
             std::cout << "'exit' to exit the powerup shop\n";
             std::cin >> input;
 
-            if (input == "mult") {
+            if (input == "mult" && !pwrUps.incomePowerupActive) {
                 if (usr.credits >= pwrUps.cost) {
                     usr.credits -= pwrUps.cost;
                     pwrUps.active = true;
+                    pwrUps.incomePowerupActive = true;
 
                     system("clear");
                     std::cout << "You now have the " << pwrUps.powerup1 << "!\n";
@@ -829,15 +998,68 @@ void powerupsMenu() {
                     std::cin.ignore();
                     std::cin.get();
                     system("clear");
+
+                    std::ofstream file;
+                    file.open("CIAN/powerups.txt");
+                    file << cryptor::encrypt(std::to_string(jobs.wizardryDegreeFinished)) << std::endl;
+                    file << cryptor::encrypt(std::to_string(pwrUps.incomePowerupActive)) << std::endl;
+                    file << cryptor::encrypt(std::to_string(pwrUps.payrisePowerupActive));
+                    file.close();
+
                     powerupsMenu();
                 } else {
                     system("clear");
+
                     std::cout << "==========================================\n";
                     std::cout << "                 Powerups\n";
                     std::cout << "==========================================\n\n";
 
                     std::cin.ignore();
                     InsufficientFunds();    
+                }
+            } else if (input == "pay" && !pwrUps.payrisePowerupActive) {
+                if (usr.credits >= pwrUps.cost) {
+                    usr.credits -= pwrUps.cost;
+                    pwrUps.payrisePowerupActive = true;
+                    pwrUps.active = true;
+
+                    if (jobs.currentJobStatus == "Waiter") {
+                        jobs.waiter += pwrUps.payrise;
+                    } else if (jobs.currentJobStatus == "Chef") {
+                        jobs.chef += pwrUps.payrise;
+                    } else if (jobs.currentJobStatus == "Teacher") {
+                        jobs.teacher += pwrUps.payrise;
+                    } else if (jobs.currentJobStatus == "Programmer") {
+                        jobs.programmer += pwrUps.payrise;
+                    } else if (jobs.currentJobStatus == "Lecturer") {
+                        jobs.lecturer += pwrUps.payrise;
+                    }
+
+                    std::ofstream file;
+
+                    file.open("CIAN/powerups.txt");
+                    file << cryptor::encrypt(std::to_string(jobs.wizardryDegreeFinished)) << std::endl;
+                    file << cryptor::encrypt(std::to_string(pwrUps.incomePowerupActive)) << std::endl;
+                    file << cryptor::encrypt(std::to_string(pwrUps.payrisePowerupActive));
+                    file.close(); 
+
+                    system("clear");
+                    std::cout << "You now have the " << pwrUps.powerup2 << "!\n";
+                    std::cout << "This rises your pay by $" << pwrUps.payrise << "!\n";
+                    std::cout << "Press enter to continue.\n";
+                    std::cin.ignore();
+                    std::cin.get();
+                    system("clear");
+                    powerupsMenu();
+                } else {
+                    system("clear");
+
+                    std::cout << "==========================================\n";
+                    std::cout << "                 Powerups\n";
+                    std::cout << "==========================================\n\n";
+
+                    std::cin.ignore();
+                    InsufficientFunds();
                 }
             } else if (input == "exit") {
                 system("clear");
@@ -850,6 +1072,13 @@ void powerupsMenu() {
                 system("clear");
                 powerupsMenu();
             }
+        } else {
+            std::cout << "You already have an active powerup!\n";
+            std::cout << "Press enter to go back to the main menu.\n";
+            std::cin.ignore();
+            std::cin.get();
+            system("clear");
+            mainMenu();
         }
     } else if (!jobs.wizardryDegreeFinished) {
         std::cout << "Requires '" << uni.course5 << "' degree.\n";
@@ -873,6 +1102,46 @@ void InsufficientFunds() {
 }
 
 int main() {
+
+    const std::string &dir = "CIAN";
+    struct stat buffer;
+
+    if (!(stat(dir.c_str(), &buffer) == 0)) {
+        system("mkdir CIAN");
+    }
+
+    // Checks for internet and opens the releases GitHub page if the user has an internet connection
+
+    std::ifstream fileRead("CIAN/redirect.txt");
+    std::string redirecttoggle;
+    getline(fileRead, redirecttoggle);
+    fileRead.close();
+
+
+    if (redirecttoggle != "redirecttoggle") {
+        system("ping -c 1 google.com > CIAN/internet.txt");
+
+        std::ifstream fileRead("CIAN/internet.txt");
+        std::string useless;
+        getline(fileRead, useless);
+
+        std::string internet;
+        getline(fileRead, internet);
+        fileRead.close();
+        system("rm CIAN/internet.txt");
+
+        if (internet.rfind("64 bytes from", 0) == 0) {
+            system("clear");
+            std::cout << "Press enter to be redirected to the releases page on GitHub." << std::endl;
+            std::cout << "If there is an update, please replace this program with it." << std::endl;
+            std::cout << "To remove this message on startup, you can change it in the main menu." << std::endl;
+            std::cin.get();
+
+            system("open https://github.com/phoebe-leong/Capitalism-In-A-Nutshell/releases");
+            system("clear");
+        }
+    }
+
     cryptor::set_key("cian");
     startScreen();
 }
