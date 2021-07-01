@@ -4,7 +4,7 @@ The aim is simple: buy every item.
 This can be achieved by getting a job, going to university, getting a better paying job, and then finally managing to buy every item.
 
 ## Third-Party Software used
-[Cryptor](https://github.com/njh0602/cryptor)
+[njh0602/cryptor](https://github.com/njh0602/cryptor)
 
 ## How to run the program
 1. Download the latest stable release.
