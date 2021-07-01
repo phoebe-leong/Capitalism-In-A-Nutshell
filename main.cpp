@@ -15,7 +15,7 @@ Jobs jobs;
 Jobs::University uni;
 shopItems shop;
 
-// function declaration
+// Function declaration
 void init();
 void usernameSelect();
 int mainMenu();
@@ -26,7 +26,7 @@ void powerupsMenu();
 void difficulty();
 void InsufficientFunds();
 void startScreen();
-void endgame();
+void settings();
 
 void startScreen() {
     std::ifstream fileRead;
@@ -90,14 +90,6 @@ void startScreen() {
         mainMenu();
     }
 
-}
-
-void endgame() {
-    std::cout << "Congratulations! You bought every item!\n";
-    std::cout << "That means that you won!\n";
-    std::cin.get();
-    system("clear");
-    mainMenu();
 }
 
 void init() {
@@ -303,11 +295,19 @@ void uniMenu() {
         } else if (!jobs.wizardryDegreeFinished && input == "wizard") {
             usr.credits -= uni.UniFee;
             jobs.wizardryDegreeFinished = true;
+            jobs.currentJobStatus += " and part-time Wizard";
 
             std::ofstream file;
             file.open("CIAN/powerups.txt");
             file << cryptor::encrypt(std::to_string(jobs.wizardryDegreeFinished)) << std::endl;
             file << cryptor::encrypt(std::to_string(pwrUps.incomePowerupActive));
+            file.close();
+
+            file.open("CIAN/data.txt");
+            file << cryptor::encrypt(usr.username) << std::endl;
+            file << cryptor::encrypt(jobs.currentJobStatus) << std::endl;
+            file << cryptor::encrypt(usr.difficultyLvl) << std::endl;
+            file << cryptor::encrypt(std::to_string(usr.credits));
             file.close();
 
             system("clear");
@@ -329,9 +329,86 @@ void uniMenu() {
         std::cout << "          You need: $" << uni.UniFee << "\n\n"; 
 
         InsufficientFunds();
+        mainMenu();
 
     }
 
+}
+
+void settings() {
+    std::cout << "==========================================\n";
+    std::cout << "               Settings\n";
+    std::cout << "==========================================\n\n"; 
+
+    std::cout << "Commands:\n";
+    std::cout << "'dif' to change your difficulty level\n";
+    std::cout << "'erase' to erase your user data\n";
+    std::cout << "'redirect' to toggle release redirect on startup\n";
+    std::cout << "'exit' to exit the settings menu\n";
+    std::string input;
+    std::cin >> input;
+
+    if (input == "dif") {
+        system("clear");
+        difficulty();
+    } else if (input == "erase") {
+        system("clear");
+        std::cout << "Are you sure you want to start over? [y/n]\n";
+        char yn;
+        std::cin >> yn;
+
+        if (yn == 'y') {
+            std::ifstream fileread("CIAN/powerups.txt");
+            system("clear");
+            system("rm CIAN/data.txt");
+            if (fileread) {
+                system("rm CIAN/powerups.txt");
+            }
+            fileread.close();
+            system("./main");
+        } else if (yn == 'n') {
+            system("clear");
+            mainMenu();
+        } else {
+            system("clear");
+            std::cout << "Invalid input.\nPress enter to go back to the main menu.\n";
+            std::cin.get();
+            system("clear");
+            mainMenu();
+        }
+
+    } else if (input == "redirect") {
+        std::ifstream fileread("CIAN/redirect.txt");
+        std::string redirecttoggle;
+        getline(fileread, redirecttoggle);
+
+        if (!redirecttoggle.empty()) {
+            system("rm CIAN/redirect.txt");
+            std::cout << "'Release redirect on startup' is now toggled on.\n";
+            std::cout << "Press enter to go back to the settings menu.\n";
+            std::cin.ignore();
+            std::cin.get();
+            system("clear");
+            settings();
+        } else {
+            std::ofstream file("CIAN/redirect.txt");
+            file << "redirecttoggle";
+            file.close();
+            system("clear");
+            std::cout << "'Release redirect on startup' is now toggled off.\n";
+            std::cout << "Press enter to go back to the settings menu.\n";
+            std::cin.ignore();
+            std::cin.get();
+            settings();
+        }
+    } else if (input == "exit") {
+        system("clear");
+        mainMenu();
+    } else {
+        std::cout << "Not an input.\nPress enter to go back to the settings menu.\n";
+        std::cin.get();
+        settings();
+    }
 }
 
 int mainMenu() {
@@ -342,8 +419,13 @@ int mainMenu() {
     }
 
     if (shop.hasItem1 && shop.hasItem2 && shop.hasItem3 & shop.hasItem4) {
-            system("clear");
-            endgame();
+        system("clear");
+
+        std::cout << "Congratulations! You bought every item!\n";
+        std::cout << "That means that you won!\n";
+        std::cin.get();
+        system("clear");
+        mainMenu();
     }
 
     if (shop.item1Amount < 0) {
@@ -381,12 +463,11 @@ int mainMenu() {
         file.close();
     }
 
-    const std::string version = "7.0";
+    const std::string version = "7.1";
 
     std::cout << "Credits: $" << usr.credits << "\n";
     std::cout << "Name: " << usr.username << "\n";
     std::cout << "Job: " << jobs.currentJobStatus << "\n";
-    std::cout << "Difficulty: " << usr.difficultyLvl << "\n";
     std::cout << "Version: " << version << "\n\n";
 
     // shows the players items (only shows the items list if they have any items)
@@ -430,28 +511,30 @@ int mainMenu() {
     std::cout << "Commands:\n";
     std::cout << "'jobs' to go to the job menu\n";
     std::cout << "'shop' to go to the shop\n";
-    std::cout << "'pwr' to go to the powerups menu\n";
+    if (jobs.wizardryDegreeFinished) {
+        std::cout << "'pwr' to go to the powerups menu\n";
+    }
     std::cout << "'uni' to go to the university menu\n";
 
     // work commands
 
     if (jobs.currentJobStatus != "Unemployed") {
-        if (jobs.currentJobStatus == "Waiter") {
+        if (jobs.currentJobStatus.rfind("Waiter", 0) == 0) {
             std::cout << "'serve' to work\n\n";
-        } else if (jobs.currentJobStatus == "Teacher") {
+        } else if (jobs.currentJobStatus.rfind("Teacher", 0) == 0) {
             std::cout << "'teach' to work\n\n";
-        } else if (jobs.currentJobStatus == "Programmer") {
+        } else if (jobs.currentJobStatus.rfind("Programmer", 0) == 0) {
             std::cout << "'code' to work\n\n";
-        } else if (jobs.currentJobStatus == "Chef") {
+        } else if (jobs.currentJobStatus.rfind("Chef", 0) == 0) {
             std::cout << "'cook' to work\n\n";
         } else {
             std::cout << "'talk' to work\n\n";
         }    
+    } else {
+        std::cout << "\n";
     }
 
-    std::cout << "'dif' to change your difficulty level\n";
-    std::cout << "'erase' to erase your user data\n";
-    std::cout << "'redirect' to toggle release redirect on startup\n";
+    std::cout << "'set' to go to the settings menu\n";
     std::cout << "'exit' to exit the program\n";
 
     std::string input;
@@ -460,59 +543,9 @@ int mainMenu() {
     if (input == "exit") {
         system("clear");
         return 0;
-    } else if (input == "erase") {
-        std::cin.ignore();
+    } else if (input == "set") {
         system("clear");
-
-        std::cout << "Are you sure you want to start over? [y/n] \n";
-        char yn;
-        std::cin >> yn;
-
-        if (yn == 'y') {
-            system("clear");
-            system("rmdir CIAN");
-            system("./main");
-        } else if (yn == 'n') {
-            system("clear");
-            mainMenu();
-        } else {
-            system("clear");
-            std::cout << "Invalid Input.\nPress enter to go back to the main menu.\n";
-            std::cin.ignore();
-            std::cin.get();
-            system("clear");
-            mainMenu();
-        }
-
-    }  else if (input == "redirect") {
-
-        std::ifstream fileRead("CIAN/redirect.txt");
-        std::string redirecttoggle;
-        getline(fileRead, redirecttoggle);
-
-        if (redirecttoggle == "redirecttoggle") {
-            system("rm CIAN/redirect.txt");
-            std::cout << "'Release redirect on startup' is now toggled on.\n";
-            std::cout << "Press enter to go back to the main menu.\n";
-            std::cin.ignore();
-            std::cin.get();
-            system("clear");
-            mainMenu();
-        } else {
-            std::ofstream file("CIAN/redirect.txt");
-            file << "redirecttoggle";
-            file.close();
-            system("clear");
-            std::cout << "'Release redirect on startup' is now toggled off.\n";
-            std::cout << "Press enter to go back to the main menu.\n";
-            std::cin.ignore();
-            std::cin.get();
-            system("clear");
-            mainMenu();
-        }
-    } else if (input == "dif") {
-        system("clear");
-        difficulty();
+        settings();
     } else if (input == "jobs" || input == "job") {
         std::cin.ignore();
         system("clear");
@@ -525,7 +558,7 @@ int mainMenu() {
         std::cin.ignore();
         system("clear");
         shopMenu();
-    } else if (input == "pwr") {
+    } else if (input == "pwr" && jobs.wizardryDegreeFinished) {
         if (pwrUps.active == true) {
             std::cout << "You already have an active powerup!\n";
             std::cout << "Press enter to go back to the main menu.\n";
@@ -821,13 +854,7 @@ void shopMenu() {
     std::cout << shop.shopItem1 << " - $" << shop.shopItem1Price << "\n";
     std::cout << shop.shopItem2 << " - $" << shop.shopItem2Price << "\n";
     std::cout << shop.shopItem3 << " - $" << shop.shopItem3Price << "\n";
-    std::cout << shop.shopItem4 << " - $" << shop.shopItem4Price << "\n";
-
-    if (pwrUps.active == false && jobs.wizardryDegreeFinished == true) {
-        std::cout << pwrUps.powerup1 << " - $" << pwrUps.cost << "\n\n";
-    } else if (pwrUps.active == false && jobs.wizardryDegreeFinished == false) {
-        std::cout << pwrUps.powerup1 << " - Requires '" << uni.course5 << "' degree - $" << pwrUps.cost << "\n\n";
-    }
+    std::cout << shop.shopItem4 << " - $" << shop.shopItem4Price << "\n\n";
 
     std::cout << "Commands:\n";
     std::cout << "'quantum' to buy the " << shop.shopItem1 << "\n";
@@ -863,6 +890,7 @@ void shopMenu() {
 
             std::cin.ignore();
             InsufficientFunds();
+            shopMenu();
         }
 
     } else if (input == "house") {
@@ -884,6 +912,7 @@ void shopMenu() {
 
             std::cin.ignore();
             InsufficientFunds();
+            shopMenu();
 
         }
     }  else if (input == "board") {
@@ -903,6 +932,7 @@ void shopMenu() {
 
             std::cin.ignore();
             InsufficientFunds();
+            shopMenu();
         }
 
     }  else if (input == "cat") {
@@ -922,6 +952,7 @@ void shopMenu() {
 
             std::cin.ignore();
             InsufficientFunds();
+            shopMenu();
         }
     } else if (input == "power" && pwrUps.active == false && jobs.wizardryDegreeFinished == true) {
         if (usr.credits >= pwrUps.cost) {
@@ -945,7 +976,8 @@ void shopMenu() {
             std::cout << "==========================================\n\n";
 
             std::cin.ignore();
-            InsufficientFunds();            
+            InsufficientFunds();
+            shopMenu();  
         }
     } else if (input == "exit") {
         system("clear");
@@ -966,139 +998,131 @@ void powerupsMenu() {
     std::cout << "                 Powerups\n";
     std::cout << "==========================================\n\n";
 
-    if (jobs.wizardryDegreeFinished) {
+    std::string input;
+    if (pwrUps.active == false) {
+        std::cout << "Credits: $" << usr.credits << "\n\n";
 
-        std::string input;
-        if (pwrUps.active == false) {
-            std::cout << "Credits: $" << usr.credits << "\n\n";
+        std::cout << pwrUps.powerup1 << " - $" << pwrUps.cost << "\n";
+        std::cout << pwrUps.powerup2 << " - $" << pwrUps.cost << "\n\n";
 
-            std::cout << pwrUps.powerup1 << " - $" << pwrUps.cost << "\n";
-            std::cout << pwrUps.powerup2 << " - $" << pwrUps.cost << "\n\n";
-
-            std::cout << "Commands:\n";
+        std::cout << "Commands:\n";
+        if (!pwrUps.active) {
             if (!pwrUps.incomePowerupActive) {
                 std::cout << "'mult' to buy the " << pwrUps.powerup1 << "\n";
             }
             if (!pwrUps.payrisePowerupActive) {
                 std::cout << "'pay' to buy the " << pwrUps.powerup1 << "\n";
             }
-            std::cout << "'exit' to exit the powerup shop\n";
-            std::cin >> input;
+        }
+        std::cout << "'exit' to exit the powerup shop\n";
+        std::cin >> input;
 
-            if (input == "mult" && !pwrUps.incomePowerupActive) {
-                if (usr.credits >= pwrUps.cost) {
-                    usr.credits -= pwrUps.cost;
-                    pwrUps.active = true;
-                    pwrUps.incomePowerupActive = true;
+        if (input == "mult" && !pwrUps.incomePowerupActive) {
+            if (usr.credits >= pwrUps.cost) {
+                usr.credits -= pwrUps.cost;
+                pwrUps.active = true;
+                pwrUps.incomePowerupActive = true;
 
-                    system("clear");
-                    std::cout << "You now have the " << pwrUps.powerup1 << "!\n";
-                    std::cout << "This multiplies your income by " << pwrUps.incomeMultiplier << " for " << pwrWait.maxCommands << " commands.\n";
-                    std::cout << "Press enter to continue.\n";
-                    std::cin.ignore();
-                    std::cin.get();
-                    system("clear");
-
-                    std::ofstream file;
-                    file.open("CIAN/powerups.txt");
-                    file << cryptor::encrypt(std::to_string(jobs.wizardryDegreeFinished)) << std::endl;
-                    file << cryptor::encrypt(std::to_string(pwrUps.incomePowerupActive)) << std::endl;
-                    file << cryptor::encrypt(std::to_string(pwrUps.payrisePowerupActive));
-                    file.close();
-
-                    powerupsMenu();
-                } else {
-                    system("clear");
-
-                    std::cout << "==========================================\n";
-                    std::cout << "                 Powerups\n";
-                    std::cout << "==========================================\n\n";
-
-                    std::cin.ignore();
-                    InsufficientFunds();    
-                }
-            } else if (input == "pay" && !pwrUps.payrisePowerupActive) {
-                if (usr.credits >= pwrUps.cost) {
-                    usr.credits -= pwrUps.cost;
-                    pwrUps.payrisePowerupActive = true;
-                    pwrUps.active = true;
-
-                    if (jobs.currentJobStatus == "Waiter") {
-                        jobs.waiter += pwrUps.payrise;
-                    } else if (jobs.currentJobStatus == "Chef") {
-                        jobs.chef += pwrUps.payrise;
-                    } else if (jobs.currentJobStatus == "Teacher") {
-                        jobs.teacher += pwrUps.payrise;
-                    } else if (jobs.currentJobStatus == "Programmer") {
-                        jobs.programmer += pwrUps.payrise;
-                    } else if (jobs.currentJobStatus == "Lecturer") {
-                        jobs.lecturer += pwrUps.payrise;
-                    }
-
-                    std::ofstream file;
-
-                    file.open("CIAN/powerups.txt");
-                    file << cryptor::encrypt(std::to_string(jobs.wizardryDegreeFinished)) << std::endl;
-                    file << cryptor::encrypt(std::to_string(pwrUps.incomePowerupActive)) << std::endl;
-                    file << cryptor::encrypt(std::to_string(pwrUps.payrisePowerupActive));
-                    file.close(); 
-
-                    system("clear");
-                    std::cout << "You now have the " << pwrUps.powerup2 << "!\n";
-                    std::cout << "This rises your pay by $" << pwrUps.payrise << "!\n";
-                    std::cout << "Press enter to continue.\n";
-                    std::cin.ignore();
-                    std::cin.get();
-                    system("clear");
-                    powerupsMenu();
-                } else {
-                    system("clear");
-
-                    std::cout << "==========================================\n";
-                    std::cout << "                 Powerups\n";
-                    std::cout << "==========================================\n\n";
-
-                    std::cin.ignore();
-                    InsufficientFunds();
-                }
-            } else if (input == "exit") {
                 system("clear");
-                mainMenu();
+                std::cout << "You now have the " << pwrUps.powerup1 << "!\n";
+                std::cout << "This multiplies your income by " << pwrUps.incomeMultiplier << " for " << pwrWait.maxCommands << " commands.\n";
+                std::cout << "Press enter to continue.\n";
+                std::cin.ignore();
+                std::cin.get();
+                system("clear");
+
+                std::ofstream file;
+                file.open("CIAN/powerups.txt");
+                file << cryptor::encrypt(std::to_string(jobs.wizardryDegreeFinished)) << std::endl;
+                file << cryptor::encrypt(std::to_string(pwrUps.incomePowerupActive)) << std::endl;
+                file << cryptor::encrypt(std::to_string(pwrUps.payrisePowerupActive));
+                file.close();
+
+                powerupsMenu();
             } else {
                 system("clear");
-                std::cout << "Not an input.\nPress enter to go back to the powerups menu and try again.\n";
+
+                std::cout << "==========================================\n";
+                std::cout << "                 Powerups\n";
+                std::cout << "==========================================\n\n";
+
+                std::cin.ignore();
+                InsufficientFunds(); 
+                powerupsMenu();
+            }
+        } else if (input == "pay" && !pwrUps.payrisePowerupActive) {
+            if (usr.credits >= pwrUps.cost) {
+                usr.credits -= pwrUps.cost;
+                pwrUps.payrisePowerupActive = true;
+                pwrUps.active = true;
+
+                if (jobs.currentJobStatus == "Waiter") {
+                    jobs.waiter += pwrUps.payrise;
+                } else if (jobs.currentJobStatus == "Chef") {
+                    jobs.chef += pwrUps.payrise;
+                } else if (jobs.currentJobStatus == "Teacher") {
+                    jobs.teacher += pwrUps.payrise;
+                } else if (jobs.currentJobStatus == "Programmer") {
+                    jobs.programmer += pwrUps.payrise;
+                } else if (jobs.currentJobStatus == "Lecturer") {
+                    jobs.lecturer += pwrUps.payrise;
+                }
+
+                std::ofstream file;
+
+                file.open("CIAN/powerups.txt");
+                file << cryptor::encrypt(std::to_string(jobs.wizardryDegreeFinished)) << std::endl;
+                file << cryptor::encrypt(std::to_string(pwrUps.incomePowerupActive)) << std::endl;
+                file << cryptor::encrypt(std::to_string(pwrUps.payrisePowerupActive));
+                file.close(); 
+
+                system("clear");
+                std::cout << "You now have the " << pwrUps.powerup2 << "!\n";
+                std::cout << "This rises your pay by $" << pwrUps.payrise << "!\n";
+                std::cout << "Press enter to continue.\n";
                 std::cin.ignore();
                 std::cin.get();
                 system("clear");
                 powerupsMenu();
+            } else {
+                system("clear");
+
+                std::cout << "==========================================\n";
+                std::cout << "                 Powerups\n";
+                std::cout << "==========================================\n\n";
+
+                std::cin.ignore();
+                InsufficientFunds();
+                powerupsMenu();
             }
+        } else if (input == "exit") {
+            system("clear");
+            mainMenu();
         } else {
-            std::cout << "You already have an active powerup!\n";
-            std::cout << "Press enter to go back to the main menu.\n";
+            system("clear");
+            std::cout << "Not an input.\nPress enter to go back to the powerups menu and try again.\n";
             std::cin.ignore();
             std::cin.get();
             system("clear");
-            mainMenu();
+            powerupsMenu();
         }
-    } else if (!jobs.wizardryDegreeFinished) {
-        std::cout << "Requires '" << uni.course5 << "' degree.\n";
+    } else {
+        std::cout << "You already have an active powerup!\n";
         std::cout << "Press enter to go back to the main menu.\n";
         std::cin.ignore();
         std::cin.get();
         system("clear");
         mainMenu();
     }
-
 }
 
 void InsufficientFunds() {
 
     std::cout << "         Insufficient funds\n";
-    std::cout << " Press enter to go back to the main menu\n";
+    std::cout << "        Press enter to go back\n";
     std::cin.get();
 
     system("clear");
-    mainMenu();
 }
 
 int main() {
