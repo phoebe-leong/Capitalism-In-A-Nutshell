@@ -36,6 +36,12 @@ struct Jobs {
 
         int UniFee = 2000;
 
+        void updateDifficultyLevel(std::string dif) {
+            if (dif == "Impossible") {
+                UniFee *= 100;
+            }
+        }
+
         int numOfDegrees = 0;
 
         std::string course1 = "Computer Science";
@@ -60,6 +66,20 @@ struct shopItems {
     int shopItem4Price = 50;
     int shopItem5Price = shopItem2Price * 2;
 
+    void updateDifficultyLevel(std::string dif) {
+        if (dif == "Easy") {
+            shopItem1Price -= 100;
+            shopItem2Price -= 50;
+            shopItem3Price -= 50;
+            shopItem4Price -= 50;
+        } else if (dif == "Impossible") {
+            shopItem1Price *= 100;
+            shopItem2Price *= 50;
+            shopItem3Price *= 50;
+            shopItem4Price *= 50;
+        }
+    }
+
     bool hasItem1 = false;
     bool hasItem2 = false;
     bool hasItem3 = false;
@@ -73,3 +93,4 @@ struct shopItems {
     bool hasAnItem = false;
 
 };
+
