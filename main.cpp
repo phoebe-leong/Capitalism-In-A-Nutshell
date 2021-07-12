@@ -94,55 +94,25 @@ void startScreen() {
 
 void init() {
 
-    if (islower(usr.difficultyLvl[0])) {
-        usr.difficultyLvl[0] = toupper(usr.difficultyLvl[0]);
-    }
-
     if (jobs.currentJobStatus.empty()) {
         jobs.currentJobStatus = "Unemployed";
-    }   
-
-    if (usr.difficultyLvl == "Easy") {
-        if (usr.creditstr.empty()) {
-            usr.credits *= 2;
-        }
-        pwrWait.maxCommands *= 2;
-        pwrUps.incomeMultiplier *=  2;
-        pwrUps.cost -= 500;
-
-        shop.item1Amount -= 100;
-        shop.item2Amount -= 50;
-        shop.item3Amount -= 50;
-        shop.item4Amount -= 50;
-
-        uni.UniFee -= 100;
-    } else if (usr.difficultyLvl == "Normal") {
-        if (usr.creditstr.empty()) {
-            usr.credits = usr.starterCredits;
-        }
-    } else if (usr.difficultyLvl == "Impossible") {
-        if (usr.creditstr.empty()) {
-            usr.credits = 0;
-        }
-
-        shop.item1Amount *= 100;
-        shop.item2Amount *= 50;
-        shop.item3Amount *= 50;
-        shop.item4Amount *= 50;
-
-        pwrUps.incomeMultiplier /= 20;
-        pwrUps.cost *= 100;
-        pwrWait.maxCommands /= 2;
-
-        uni.UniFee *= 100;
     }
+
+    shop.updateDifficultyLevel(usr.difficultyLvl);
+    pwrUps.updateDifficultyLevel(usr.difficultyLvl);
+    pwrWait.updateDifficultyLevel(usr.difficultyLvl);
+    uni.updateDifficultyLevel(usr.difficultyLvl);
 }
 
 void difficulty() {
     std::cout << "Choose a difficulty: Easy, Normal, Impossible\n";
     std::cin >> usr.difficultyLvl;
 
-    if (usr.difficultyLvl == "Easy" || usr.difficultyLvl == "easy" || usr.difficultyLvl == "Normal" || usr.difficultyLvl == "normal" || usr.difficultyLvl == "Impossible" || usr.difficultyLvl == "impossible")  {
+    if (islower(usr.difficultyLvl[0])) {
+        usr.difficultyLvl[0] = toupper(usr.difficultyLvl[0]);
+    }
+
+    if (usr.difficultyLvl == "Easy" || usr.difficultyLvl == "Normal" || usr.difficultyLvl == "Impossible")  {
         init();
         mainMenu();
     } else {
@@ -463,7 +433,7 @@ int mainMenu() {
         file.close();
     }
 
-    const std::string version = "7.1";
+    const std::string version = "7.2";
 
     std::cout << "Credits: $" << usr.credits << "\n";
     std::cout << "Name: " << usr.username << "\n";
