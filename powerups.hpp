@@ -1,9 +1,7 @@
 #pragma once
 
 struct Powerups {
-    // Cost for any given powerup
     int cost = 3000;
-    // Whether a powerup is currently active
     bool active = false;
 
     // Wait variables
