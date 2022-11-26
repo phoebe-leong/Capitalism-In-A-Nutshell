@@ -10,8 +10,7 @@ This can be achieved by getting a job, going to university, getting a better pay
 [njh0602/cryptor](https://github.com/njh0602/cryptor)
 
 ## How to run the program
-1. Download the latest stable release.
-2. Navigate to the release on your computer.
-3. Open a new Terminal / Command Prompt window in the directory.
-4. Type `./main` into the window and press enter.
-5. The program should now run.
+  1. Download the latest release's source code
+  2. In your Terminal, run the program ``run.sh`` to compile the files
+  3. You should receive an executable program called "CapitalismInANutshell", the program to run
+  4. To play the game run "CapitalismInANutshell" on your computer, either through the Terminal or double-clicking on it
