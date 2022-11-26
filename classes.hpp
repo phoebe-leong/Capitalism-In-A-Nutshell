@@ -16,7 +16,6 @@ struct Jobs {
     std::string currentJobStatus;
 
     // university degree stuffs
-
     bool csDegreeFinished = false;
     bool teachingDegreeFinished = false;
     bool cookingDegreeFinished = false;
@@ -24,7 +23,6 @@ struct Jobs {
     bool wizardryDegreeFinished = false;
 
     // job = {pay per min}
-
     int programmer = 1000; // requires university degree in computer science
     int chef = 200; // requires university degree in cooking
     int lecturer = 300; // requires university degree in talking 
@@ -44,53 +42,54 @@ struct Jobs {
 
         int numOfDegrees = 0;
 
-        std::string course1 = "Computer Science";
-        std::string course2 = "Teaching";
-        std::string course3 = "Cooking";
-        std::string course4 = "Talking";
-        std::string course5 = "Wizardry";
+        std::string csDegree = "Computer Science";
+        std::string teachingDegree = "Teaching";
+        std::string cookingDegree = "Cooking";
+        std::string talkingDegree = "Talking";
+        std::string wizardryDegree = "Wizardry";
 
     };
 };
 
 struct shopItems {
 
-    std::string shopItem1 = "Quantum Computer";
-    std::string shopItem2 = "Teaching";
-    std::string shopItem3 = "Cooking";
-    std::string shopItem4 = "Talking";
+    std::string computer = "Quantum Computer";
+    std::string house = "Big house";
+    std::string board = "Skateboard";
+    std::string cat = "Cat";
 
-    int shopItem1Price = 100000;
-    int shopItem2Price = 1000;
-    int shopItem3Price = 9000;
-    int shopItem4Price = 50;
-    int shopItem5Price = shopItem2Price * 2;
+    int computerPrice = 100000;
+    int housePrice = 1000;
+    int boardPrice = 9000;
+    int catPrice = 50;
+    int shopItem5Price = housePrice * 2;
 
     void updateDifficultyLevel(std::string dif) {
         if (dif == "Easy") {
-            shopItem1Price -= 100;
-            shopItem2Price -= 50;
-            shopItem3Price -= 50;
-            shopItem4Price -= 50;
+            computerPrice -= 100;
+            housePrice -= 50;
+            boardPrice -= 50;
+            catPrice -= 50;
         } else if (dif == "Impossible") {
-            shopItem1Price *= 100;
-            shopItem2Price *= 50;
-            shopItem3Price *= 50;
-            shopItem4Price *= 50;
+            computerPrice *= 100;
+            housePrice *= 50;
+            boardPrice *= 50;
+            catPrice *= 50;
         }
     }
 
-    bool hasItem1 = false;
-    bool hasItem2 = false;
-    bool hasItem3 = false;
-    bool hasItem4 = false;
+    bool hasComputer = false;
+    bool hasHouse = false;
+    bool hasBoard = false;
+    bool hasCat = false;
 
-    int item1Amount;
-    int item2Amount;
-    int item3Amount;
-    int item4Amount;
+    int computerAmount;
+    int houseAmount;
+    int boardAmount;
+    int catAmount;
 
-    bool hasAnItem = false;
+    bool hasAnItem = (hasComputer || hasHouse || hasBoard || hasCat) ? true : false;
+    bool hasAllItems = (hasComputer && hasHouse && hasBoard && hasCat) ? true : false;
 
 };
 
