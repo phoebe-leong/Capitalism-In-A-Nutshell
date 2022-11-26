@@ -1,7 +1,10 @@
 # :sparkles: Capitalism In A Nutshell ( CIAN ) :sparkles:
 
+> **Currently only supports UNIX-like operating systems (e.g., Linux, MacOS)**  
+> Windows support coming soon!
+
 The aim is simple: buy every item.  
-This can be achieved by getting a job, going to university, getting a better paying job, and then finally managing to buy every item.
+This can be achieved by getting a job, going to university, getting a better paying job so you will be able to achieve the end goal
 
 ## Dependencies ( included )
 [njh0602/cryptor](https://github.com/njh0602/cryptor)
